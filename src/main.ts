@@ -11,8 +11,8 @@ import StopBtn from "./objects/StopBtn";
 
 
 DisplayManager.init({
-    vw: 28,
-    vh: 20,
+    vw: 280,
+    vh: 200,
     w: 1120,
     h: 800,
     TCO: {
@@ -21,18 +21,18 @@ DisplayManager.init({
             y: 0
         },
         size: {
-            w: 28,
-            h: 8
+            w: 280,
+            h: 80
         }
     },
     grid: {
         pos: {
-            x: 4,
-            y: 8.5
+            x: 40,
+            y: 85
         },
         size: {
-            w: 20,
-            h: 10
+            w: 200,
+            h: 100
         },
         nbRows: 8,
         nbColumns: 10
@@ -44,89 +44,89 @@ var gare = {
         "AE": {
             type: "Track",
             view: {
-                line: [{x: 1, y: 2}, {x: 3.9, y: 2}],
+                line: [{x: 10, y: 20}, {x: 39, y: 20}],
                 label: {
                     value: "AE",
-                    pos: {x: 2, y: 2}
+                    pos: {x: 20, y: 20}
                 }
             }
         },
         "1": {
             type: "Track",
             view: {
-                line: [{x: 7.1, y: 2}, {x: 14.9, y: 2}],
+                line: [{x: 71, y: 20}, {x: 149, y: 20}],
                 label: {
                     value: "1",
-                    pos: {x: 12, y: 2}
+                    pos: {x: 120, y: 20}
                 }
             }
         },
         "A": {
             type: "Track",
             view: {
-                line: [{x: 9.1, y: 4}, {x: 14.9, y: 4}],
+                line: [{x: 91, y: 40}, {x: 149, y: 40}],
                 label: {
                     value: "A",
-                    pos: {x: 12, y: 4}
+                    pos: {x: 120, y: 40}
                 }
             }
         },
         "2": {
             type: "Track",
             view: {
-                line: [{x: 9.1, y: 6}, {x: 14.9, y: 6}],
+                line: [{x: 91, y: 60}, {x: 149, y: 60}],
                 label: {
                     value: "2",
-                    pos: {x: 12, y: 6}
+                    pos: {x: 120, y: 60}
                 }
             }
         },
         "DE": {
             type: "Track",
             view: {
-                line: [{x: 1, y: 6}, {x: 3.9, y: 6}],
+                line: [{x: 10, y: 60}, {x: 39, y: 60}],
                 label: {
                     value: "DE",
-                    pos: {x: 2, y: 6}
+                    pos: {x: 20, y: 60}
                 }
             }
         },
         "21": {
             type: "Track",
             view: {
-                line: [{x: 21.1, y: 2}, {x: 22.9, y: 2}]
+                line: [{x: 211, y: 20}, {x: 229, y: 20}]
             }
         },
         "DT": {
             type: "Track",
             view: {
-                line: [{x: 23.1, y: 2}, {x: 26.9, y: 2}],
+                line: [{x: 231, y: 20}, {x: 269, y: 20}],
                 label: {
                     value: "DT",
-                    pos: {x: 25, y: 2}
+                    pos: {x: 250, y: 20}
                 }
             }
         },
         "AT": {
             type: "Track",
             view: {
-                line: [{x: 21.1, y: 6}, {x: 26.9, y: 6}],
+                line: [{x: 211, y: 60}, {x: 269, y: 60}],
                 label: {
                     value: "AT",
-                    pos: {x: 25, y: 6}
+                    pos: {x: 250, y: 60}
                 }
             }
         },
         "103a": {
             type: "Switch",
             view: {
-                center: {x: 5, y: 2},
-                lone: [{x: 4.1, y: 2}],
-                left: [{x: 6.9, y: 2}],
-                right: [{x: 5.93, y: 2.93}],
+                center: {x: 50, y: 20},
+                lone: [{x: 41, y: 20}],
+                left: [{x: 69, y: 20}],
+                right: [{x: 59.3, y: 29.3}],
                 label: {
                     value: "103a",
-                    pos: {x: 4.5, y: 2},
+                    pos: {x: 45, y: 20},
                     above: false
                 }
             }
@@ -134,13 +134,13 @@ var gare = {
         "103b": {
             type: "Switch",
             view: {
-                center: {x: 7, y: 4},
-                lone: [{x: 8.9, y: 4}],
-                left: [{x: 6.5, y: 4}, {x: 5.57, y: 4.93}],
-                right: [{x: 6.07, y: 3.07}],
+                center: {x: 70, y: 40},
+                lone: [{x: 89, y: 40}],
+                left: [{x: 65, y: 40}, {x: 55.7, y: 49.3}],
+                right: [{x: 60.7, y: 30.7}],
                 label: {
                     value: "103b",
-                    pos: {x: 7, y: 4},
+                    pos: {x: 70, y: 40},
                     above: false
                 }
             }
@@ -148,13 +148,13 @@ var gare = {
         "102": {
             type: "Switch",
             view: {
-                center: {x: 4.5, y: 6},
-                lone: [{x: 4.1, y: 6}],
-                left: [{x: 5.43, y: 5.07}],
-                right: [{x: 8.9, y: 6}],
+                center: {x: 45, y: 60},
+                lone: [{x: 41, y: 60}],
+                left: [{x: 54.3, y: 50.7}],
+                right: [{x: 89, y: 60}],
                 label: {
                     value: "102",
-                    pos: {x: 4.5, y: 6},
+                    pos: {x: 45, y: 60},
                     above: false
                 }
             }
@@ -162,13 +162,13 @@ var gare = {
         "109a": {
             type: "Switch",
             view: {
-                center: {x: 17, y: 4},
-                lone: [{x: 15.1, y: 4}],
-                left: [{x: 17.93, y: 3.07}],
-                right: [{x: 17.5, y: 4}, {x: 18.43, y: 4.93}],
+                center: {x: 170, y: 40},
+                lone: [{x: 151, y: 40}],
+                left: [{x: 179.3, y: 30.7}],
+                right: [{x: 175, y: 40}, {x: 184.3, y: 49.3}],
                 label: {
                     value: "109a",
-                    pos: {x: 17, y: 4},
+                    pos: {x: 170, y: 40},
                     above: false
                 }
             }
@@ -176,13 +176,13 @@ var gare = {
         "109b": {
             type: "Switch",
             view: {
-                center: {x: 19, y: 2},
-                lone: [{x: 20.9, y: 2}],
-                left: [{x: 18.07, y: 2.93}],
-                right: [{x: 15.1, y: 2}],
+                center: {x: 190, y: 20},
+                lone: [{x: 209, y: 20}],
+                left: [{x: 180.7, y: 29.3}],
+                right: [{x: 151, y: 20}],
                 label: {
                     value: "109b",
-                    pos: {x: 19, y: 2},
+                    pos: {x: 190, y: 20},
                     above: true
                 }
             }
@@ -190,20 +190,19 @@ var gare = {
         "110": {
             type: "Switch",
             view: {
-                center: {x: 19.5, y: 6},
-                lone: [{x: 20.9, y: 6}],
-                left: [{x: 15.1, y: 6}],
-                right: [{x: 18.57, y: 5.07}],
+                center: {x: 195, y: 60},
+                lone: [{x: 209, y: 60}],
+                left: [{x: 151, y: 60}],
+                right: [{x: 185.7, y: 50.7}],
                 label: {
                     value: "110",
-                    pos: {x: 19.5, y: 6},
+                    pos: {x: 195, y: 60},
                     above: false
                 }
             }
         }
     },
     wires: [
-        ["AE", "right", "103a", "lone"],
         ["103a", "left", "1", "left"],
         ["1", "right", "109b", "right"],
         ["109b", "lone", "21", "left"],
@@ -216,8 +215,7 @@ var gare = {
         ["110", "right", "109a", "right"],
         ["DE", "right", "102", "lone"],
         ["102", "right", "2", "left"],
-        ["2", "right", "110", "left"],
-        ["110", "lone", "AT", "left"]
+        ["2", "right", "110", "left"]
     ],
     zones: {
         "z10": {
@@ -225,7 +223,7 @@ var gare = {
             view: {
                 label: {
                     value: "z10",
-                    pos: {x: 3.25, y: 6},
+                    pos: {x: 32.5, y: 60},
                     above: true
                 }
             }
@@ -235,7 +233,7 @@ var gare = {
             view: {
                 label: {
                     value: "z12",
-                    pos: {x: 5.75, y: 6},
+                    pos: {x: 57.5, y: 60},
                     above: true
                 }
             }
@@ -245,7 +243,7 @@ var gare = {
             view: {
                 label: {
                     value: "z13",
-                    pos: {x: 5.5, y: 2},
+                    pos: {x: 55, y: 20},
                     above: true
                 }
             }
@@ -255,7 +253,7 @@ var gare = {
             view: {
                 label: {
                     value: "z15",
-                    pos: {x: 11, y: 2},
+                    pos: {x: 110, y: 20},
                     above: true
                 }
             }
@@ -265,7 +263,7 @@ var gare = {
             view: {
                 label: {
                     value: "z16",
-                    pos: {x: 8, y: 4},
+                    pos: {x: 80, y: 40},
                     above: true
                 }
             }
@@ -275,7 +273,7 @@ var gare = {
             view: {
                 label: {
                     value: "z17",
-                    pos: {x: 17, y: 2},
+                    pos: {x: 170, y: 20},
                     above: true
                 }
             }
@@ -285,7 +283,7 @@ var gare = {
             view: {
                 label: {
                     value: "z18",
-                    pos: {x: 10.5, y: 4},
+                    pos: {x: 105, y: 40},
                     above: true
                 }
             }
@@ -295,7 +293,7 @@ var gare = {
             view: {
                 label: {
                     value: "z21",
-                    pos: {x: 22, y: 2},
+                    pos: {x: 220, y: 20},
                     above: true
                 }
             }
@@ -305,7 +303,7 @@ var gare = {
             view: {
                 label: {
                     value: "z22",
-                    pos: {x: 16, y: 4},
+                    pos: {x: 160, y: 40},
                     above: true
                 }
             }
@@ -315,7 +313,7 @@ var gare = {
             view: {
                 label: {
                     value: "z23",
-                    pos: {x: 24, y: 2},
+                    pos: {x: 240, y: 20},
                     above: true
                 }
             }
@@ -325,7 +323,7 @@ var gare = {
             view: {
                 label: {
                     value: "z26",
-                    pos: {x: 20, y: 6},
+                    pos: {x: 200, y: 60},
                     above: true
                 }
             }
@@ -335,7 +333,7 @@ var gare = {
             view: {
                 label: {
                     value: "z34",
-                    pos: {x: 13, y: 6},
+                    pos: {x: 130, y: 60},
                     above: true
                 }
             }
@@ -343,6 +341,7 @@ var gare = {
     },
     sources: {
         "AE_right": {
+            // TODO add source gate (exemple here: "AE")
             view: {
                 label: {
                     value: "AE",
@@ -350,7 +349,7 @@ var gare = {
                 },
                 stoplight: {
                     value: "111",
-                    pos: {x: 3.9, y: 2},
+                    pos: {x: 39, y: 20},
                     dir: "right"
                 },
                 ZAp: true
@@ -364,7 +363,7 @@ var gare = {
                 },
                 stoplight: {
                     value: "131",
-                    pos: {x: 14.9, y: 2},
+                    pos: {x: 149, y: 20},
                     dir: "right"
                 },
                 ZAp: true
@@ -378,7 +377,7 @@ var gare = {
                 },
                 stoplight: {
                     value: "129",
-                    pos: {x: 14.9, y: 4},
+                    pos: {x: 149, y: 40},
                     dir: "right"
                 },
                 ZAp: true
@@ -392,7 +391,7 @@ var gare = {
                 },
                 stoplight: {
                     value: "116",
-                    pos: {x: 9.1, y: 4},
+                    pos: {x: 91, y: 40},
                     dir: "left"
                 },
                 ZAp: true
@@ -406,7 +405,7 @@ var gare = {
                 },
                 stoplight: {
                     value: "114",
-                    pos: {x: 9.1, y: 6},
+                    pos: {x: 91, y: 60},
                     dir: "left"
                 },
                 ZAp: true
@@ -420,7 +419,7 @@ var gare = {
                 },
                 stoplight: {
                     value: "122",
-                    pos: {x: 19.95, y: 2},
+                    pos: {x: 199.5, y: 20},
                     dir: "left"
                 },
                 ZAp: false
@@ -434,7 +433,7 @@ var gare = {
                 },
                 stoplight: {
                     value: "128",
-                    pos: {x: 21.1, y: 6},
+                    pos: {x: 211, y: 60},
                     dir: "left"
                 },
                 ZAp: true
@@ -444,7 +443,8 @@ var gare = {
     routes: {
         "AE_1": {
             source: "AE_right",
-            gates: ["AE", "103a", "1"],
+            zones: ["z13", "z15"],
+            gates: ["103a", "1"],
             TP: true,
             view: {
                 btn: {
@@ -458,7 +458,8 @@ var gare = {
         },
         "AE_A": {
             source: "AE_right",
-            gates: ["AE", "103a", "103b", "A"],
+            zones: ["z13", "z16", "z18"],
+            gates: ["103a", "103b", "A"],
             TP: false,
             view: {
                 btn: {
@@ -471,7 +472,8 @@ var gare = {
         },
         "1_DT": {
             source: "1_right",
-            gates: ["1", "109b", "21", "DT"],
+            zones: ["z17", "z21", "z23"],
+            gates: ["109b", "21", "DT"],
             TP: false,
             view: {
                 btn: {
@@ -485,7 +487,8 @@ var gare = {
         },
         "A_DT": {
             source: "A_right",
-            gates: ["A", "109a", "109b", "21", "DT"],
+            zones: ["z22", "z17", "z21", "z23"],
+            gates: ["109a", "109b", "21", "DT"],
             TP: false,
             view: {
                 btn: {
@@ -498,7 +501,8 @@ var gare = {
         },
         "DT_A": {
             source: "DT_left",
-            gates: ["DT", "21", "109b", "109a", "A"],
+            zones: ["z17", "z22", "z18"],
+            gates: ["109b", "109a", "A"],
             TP: false,
             view: {
                 btn: {
@@ -511,7 +515,8 @@ var gare = {
         },
         "AT_A": {
             source: "AT_left",
-            gates: ["AT", "110", "109a", "A"],
+            zones: ["z26", "z22", "z18"],
+            gates: ["110", "109a", "A"],
             TP: false,
             view: {
                 btn: {
@@ -524,7 +529,8 @@ var gare = {
         },
         "AT_2": {
             source: "AT_left",
-            gates: ["AT", "110", "2"],
+            zones: ["z26", "z34"],
+            gates: ["110", "2"],
             TP: true,
             view: {
                 btn: {
@@ -538,7 +544,8 @@ var gare = {
         },
         "2_DE": {
             source: "2_left",
-            gates: ["2", "102", "DE"],
+            zones: ["z12", "z10"],
+            gates: ["102", "DE"],
             TP: true,
             view: {
                 btn: {
@@ -552,7 +559,8 @@ var gare = {
         },
         "A_DE": {
             source: "A_left",
-            gates: ["A", "103b", "102", "DE"],
+            zones: ["z16", "z12", "z10"],
+            gates: ["103b", "102", "DE"],
             TP: false,
             view: {
                 btn: {
@@ -615,8 +623,9 @@ var routes = {};
 Object.getOwnPropertyNames(gare.routes).forEach((routeName) => {
     let route = gare.routes[routeName];
     let source = sources[route.source];
-    let zoneGates = route.gates.map((name) => gates[name]);
-    routes[routeName] = new Route(routeName, source, zoneGates, route.TP, route.view);
+    let routeZones = route.zones.map((name) => zones[name]);
+    let routeGates = route.gates.map((name) => gates[name]);
+    routes[routeName] = new Route(routeName, source, routeZones, routeGates, route.TP, route.view);
 });
 
 // Add stop btn

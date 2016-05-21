@@ -1,6 +1,7 @@
 import DisplayManager from "./DisplayManager";
 import El from "./El";
 import Source from "./Source";
+import Zone from "./Zone";
 import Gate from "./Gate";
 
 /**
@@ -9,18 +10,19 @@ import Gate from "./Gate";
 class Route extends El {
     TP: boolean = false;
     source: Source = null;
+    zones: Zone[] = [];
     gates: Gate[] = [];
-    ports: string[] = [];
 
     view: {
         text?: Snap.Element;
     } = {};
 
-    constructor(_id: string, _source: Source, _gates: Gate[], _TP: boolean, _view: ViewConstructor) {
+    constructor(_id: string, _source: Source, _zones: Zone[], _gates: Gate[], _TP: boolean, _view: ViewConstructor) {
         super(_id);
 
         this.TP = _TP;
         this.source = _source;
+        this.zones = _zones;
         this.gates = _gates;
 
         this.createView(_view);
@@ -28,9 +30,11 @@ class Route extends El {
     }
 
     onClick(type: string) {
+        console.log(this.id);
         this.gates.forEach((gate, i, gates) => {
+            console.log(i, gate.id);
             gate.changeRouteState(type, gates[i - 1], gates[i + 1]);
-        })
+        });
     }
 
     createView(_view: ViewConstructor) {

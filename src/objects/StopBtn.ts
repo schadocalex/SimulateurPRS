@@ -21,7 +21,7 @@ class StopBtn extends El {
         this.sources = _sources;
 
         this.createView(_view);
-        this.updateView();
+        this.updateView(false);
     }
 
     onClick() {
@@ -54,11 +54,13 @@ class StopBtn extends El {
             .click(() => this.onClick());
     }
 
-    updateView() {
+    updateView(animated: boolean = true) {
         this.view.circleBg.attr({
             fill: DisplayManager.cfg.color.stopBtnCircle[this.state]
         });
-        this.view.arrow.transform("r" + (this.state === "on" ? "0" : "180"));
+        Snap.animate(0, 180, value => {
+            this.view.arrow.transform("r" + (this.state === "on" ? value - 180  : -value));
+        }, animated ? 100 : 0);
     }
 }
 export default StopBtn;

@@ -102,129 +102,129 @@ class DisplayManager {
             line: {
                 fill: "black",
                 stroke: "grey",
-                strokeWidth: 0.2
+                strokeWidth: 2
             },
             grid: {
                 fill: "lightblue",
                 stroke: "black",
-                strokeWidth: 0.05
+                strokeWidth: 0.5
             },
             trackLabel: {
                 fill: "white",
-                "font-size": 0.3,
+                "font-size": 3,
                 "text-anchor": "middle",
                 "font-family": "Arial"
             },
             trackBgLabel: {
                 stroke: "white",
-                strokeWidth: 0.03,
+                strokeWidth: 0.3,
                 fill: "black",
                 sizeCoeff: 0.7
             },
             switchLabel: {
                 fill: "yellow",
-                "font-size": 0.3,
+                "font-size": 3,
                 "font-family": "Arial",
                 "text-anchor": "middle",
-                offsetY: 0.3
+                offsetY: 3
             },
             switchLed: {
-                distanceFromCenter: 0.7,
+                distanceFromCenter: 7,
                 sizeRatio: 0.45
             },
             zoneLabel: {
                 fill: "lime",
-                "font-size": 0.4,
+                "font-size": 4,
                 "font-family": "Arial",
                 "text-anchor": "middle",
-                offsetY: 0.4
+                offsetY: 4
             },
             sourceLabel: {
                 fill: "white",
-                "font-size": 0.8,
+                "font-size": 8,
                 "font-family": "Arial",
                 "text-anchor": "middle",
                 "alignment-baseline": "middle",
-                offsetY: 0.1
+                offsetY: 1
             },
             sourceLabelBg: {
                 fill: "black"
             },
             routeBtn: {
                 fill: "black",
-                "font-size": 0.8,
+                "font-size": 8,
                 "font-family": "Arial",
                 "text-anchor": "middle",
                 "alignment-baseline": "middle",
-                offsetY: 0.1
+                offsetY: 1
             },
             routeBtnBg: {
                 DA: {
                     stroke: "black",
-                    strokeWidth: 0.03,
+                    strokeWidth: 0.3,
                     fill: "grey",
-                    rx: 0.2,
-                    ry: 0.2,
-                    padding: 0.15
+                    rx: 2,
+                    ry: 2,
+                    padding: 1.5
                 },
                 TP: {
                     stroke: "black",
-                    strokeWidth: 0.03,
+                    strokeWidth: 0.3,
                     fill: "brown",
-                    rx: 0.2,
-                    ry: 0.2,
-                    padding: 0.15
+                    rx: 2,
+                    ry: 2,
+                    padding: 1.5
                 }
             },
             stoplight: {
                 rect: {
                     stroke: "white",
-                    strokeWidth: 0.05,
-                    rx: 0.05,
-                    ry: 0.05,
-                    w: 0.5,
-                    h: 0.2,
+                    strokeWidth: 0.5,
+                    rx: 0.5,
+                    ry: 0.5,
+                    w: 5,
+                    h: 2,
                     line: {
-                        w: 0.4,
-                        h: 0.3
+                        w: 4,
+                        h: 3
                     }
                 }
             },
             stoplightLabel: {
-                "font-size": 0.4,
+                "font-size": 4,
                 "font-family": "Arial",
                 "text-anchor": "middle",
-                offsetY_right: -0.15,
-                offsetY_left: 0.65
+                offsetY_right: -1.5,
+                offsetY_left: 6.5
             },
             ZAp: {
-                w: 0.3,
-                h: 0.3,
-                rx: 0.05,
-                ry: 0.05,
+                w: 3,
+                h: 3,
+                rx: 0.5,
+                ry: 0.5,
                 stroke: "red",
                 fill: "black",
-                strokeWidth: 0.05,
-                offsetX: -1.4,
-                offsetY: -0.2,
+                strokeWidth: 0.5,
+                offsetX: -14,
+                offsetY: -2,
                 circleRatio: 0.4
             },
             ZApLabel: {
                 fill: "lightgrey",
-                "font-size": 0.3,
+                "font-size": 3,
                 "font-family": "Arial",
                 "text-anchor": "middle",
-                offsetY_right: -0.15,
-                offsetY_left: 0.7
+                offsetY_right: -1.5,
+                offsetY_left: 7
             },
             stopBtnCircle: {
                 stroke: "black",
-                "stroke-width": 0.05,
-                padding: 0.1
+                "stroke-width": 0.5,
+                padding: 1
             },
             stopBtnArrow: {
                 stroke: "black",
-                "stroke-width": 0.05,
+                "stroke-width": 0.5,
                 fill: "white",
                 _points: [0.47, 0.9, 0.47, 0.3, 0.4, 0.3, 0.5, 0.1, 0.6, 0.3, 0.53, 0.3, 0.53, 0.9],
             }

@@ -185,7 +185,7 @@ declare module Snap {
         animate(attrs:{[attr:string]:string|number|boolean|any},duration:number,easing?:(num: number)=> number,callback?:()=>void):Snap.Element;
         append(el:Snap.Element):Snap.Element;
         appendTo(el:Snap.Element):Snap.Element;
-        asPX(attr:string,value?:string):number;            //TODO: check what is really returned
+        asPX(attr:string,value?:string):number;       //TODO: check what is really returned
         attr(param:string,value?:string):string;
         attr(params:{[attr:string]:string|number|boolean|any}):Snap.Element;
         before(el:Snap.Element):Snap.Element;
