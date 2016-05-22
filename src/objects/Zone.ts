@@ -7,6 +7,10 @@ import El from "./El";
  */
 class Zone extends El {
     gates: Gate[] = [];
+    transit = {
+        left: false,
+        right: false
+    };
 
     view: {
         text?: Snap.Element;
@@ -20,6 +24,26 @@ class Zone extends El {
         this.createView(_view);
         this.updateView();
     }
+
+    //////////////////////////////////////////////////
+    // Logic
+    //////////////////////////////////////////////////
+
+    Lock(_transit: string) {
+        this.transit[_transit] = true;
+    }
+
+    Unlock(_transit: string) {
+        this.transit[_transit] = false;
+    }
+
+    IsLocked(_transit: string) {
+        return this.transit[_transit] === true;
+    }
+
+    //////////////////////////////////////////////////
+    // View
+    //////////////////////////////////////////////////
 
     createView(_view: ViewConstructor) {
         // Create the label

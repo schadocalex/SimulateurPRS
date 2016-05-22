@@ -9,7 +9,6 @@ import Source from "./objects/Source";
 import Route from "./objects/Route";
 import StopBtn from "./objects/StopBtn";
 
-
 DisplayManager.init({
     vw: 280,
     vh: 200,
@@ -446,6 +445,7 @@ var gare = {
             zones: ["z13", "z15"],
             gates: ["103a", "1"],
             TP: true,
+            transit: "right",
             view: {
                 btn: {
                     value: "1",
@@ -461,6 +461,7 @@ var gare = {
             zones: ["z13", "z16", "z18"],
             gates: ["103a", "103b", "A"],
             TP: false,
+            transit: "right",
             view: {
                 btn: {
                     value: "A",
@@ -474,7 +475,8 @@ var gare = {
             source: "1_right",
             zones: ["z17", "z21", "z23"],
             gates: ["109b", "21", "DT"],
-            TP: false,
+            TP: true,
+            transit: "right",
             view: {
                 btn: {
                     value: "DT",
@@ -490,6 +492,7 @@ var gare = {
             zones: ["z22", "z17", "z21", "z23"],
             gates: ["109a", "109b", "21", "DT"],
             TP: false,
+            transit: "right",
             view: {
                 btn: {
                     value: "DT",
@@ -504,6 +507,7 @@ var gare = {
             zones: ["z17", "z22", "z18"],
             gates: ["109b", "109a", "A"],
             TP: false,
+            transit: "left",
             view: {
                 btn: {
                     value: "A",
@@ -518,6 +522,7 @@ var gare = {
             zones: ["z26", "z22", "z18"],
             gates: ["110", "109a", "A"],
             TP: false,
+            transit: "left",
             view: {
                 btn: {
                     value: "A",
@@ -532,6 +537,7 @@ var gare = {
             zones: ["z26", "z34"],
             gates: ["110", "2"],
             TP: true,
+            transit: "left",
             view: {
                 btn: {
                     value: "2",
@@ -547,6 +553,7 @@ var gare = {
             zones: ["z12", "z10"],
             gates: ["102", "DE"],
             TP: true,
+            transit: "left",
             view: {
                 btn: {
                     value: "DE",
@@ -562,6 +569,7 @@ var gare = {
             zones: ["z16", "z12", "z10"],
             gates: ["103b", "102", "DE"],
             TP: false,
+            transit: "left",
             view: {
                 btn: {
                     value: "DE",
@@ -618,6 +626,14 @@ Object.getOwnPropertyNames(gare.sources).forEach((sourceName) => {
     sources[sourceName] = new Source(sourceName, source.view);
 });
 
+// Add stop btn
+var stopBtns = {};
+Object.getOwnPropertyNames(gare.stopBtn).forEach((btnName) => {
+    let btn = gare.stopBtn[btnName];
+    let btnSources = btn.sources.map((name) => sources[name]);
+    stopBtns[btnName] = new StopBtn(btnName, btnSources, btn.view);
+});
+
 // Add routes
 var routes = {};
 Object.getOwnPropertyNames(gare.routes).forEach((routeName) => {
@@ -625,13 +641,5 @@ Object.getOwnPropertyNames(gare.routes).forEach((routeName) => {
     let source = sources[route.source];
     let routeZones = route.zones.map((name) => zones[name]);
     let routeGates = route.gates.map((name) => gates[name]);
-    routes[routeName] = new Route(routeName, source, routeZones, routeGates, route.TP, route.view);
-});
-
-// Add stop btn
-var stopBtns = {};
-Object.getOwnPropertyNames(gare.stopBtn).forEach((btnName) => {
-    let btn = gare.stopBtn[btnName];
-    let btnSources = btn.sources.map((name) => sources[name]);
-    stopBtns[btnName] = new StopBtn(btnName, btnSources, btn.view);
+    routes[routeName] = new Route(routeName, source, routeZones, routeGates, route.transit, route.TP, route.view);
 });

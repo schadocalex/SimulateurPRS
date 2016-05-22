@@ -12,7 +12,7 @@ class Switch extends Gate {
     } = {};
 
     state: "left" | "right" | "unknown" = "unknown";
-    routeState: string = "free"; // "DAL" | "DAR" | "TPL" | "TPR" | "free" DA/TP Left/Right
+    routeState: "DAL" | "DAR" | "TPL" | "TPR" | "free" = "free"; // DA/TP Left/Right
 
     view: {
         leftLine?: Snap.Element;
@@ -25,26 +25,6 @@ class Switch extends Gate {
     constructor(_id: string, _view: ViewConstructor) {
         super(_id);
         this.createView(_view);
-        this.updateView();
-    }
-
-    changeRouteState(routeType: string, gateFrom: Gate, gateTo: Gate) {
-        var routeState;
-
-        if (gateFrom && this.ports.left === gateFrom || gateTo && this.ports.left === gateTo) {
-            routeState = routeType + "L";
-            this.state = "left";
-        } else if (gateFrom && this.ports.right === gateFrom || gateTo && this.ports.right === gateTo) {
-            routeState = routeType + "R";
-            this.state = "right";
-        }
-
-        if(this.routeState === routeState) {
-            this.routeState = "free";
-        } else {
-            this.routeState = routeState;
-        }
-
         this.updateView();
     }
 

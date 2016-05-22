@@ -13,7 +13,5 @@ abstract class Gate extends El {
         from.ports[fromPort] = to;
         to.ports[toPort] = from;
     }
-
-    abstract changeRouteState(routeType: string, gateFrom: Gate, gateTo: Gate);
 }
 export default Gate;

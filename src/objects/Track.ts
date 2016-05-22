@@ -10,7 +10,7 @@ class Track extends Gate {
         right?: Gate;
     } = {};
 
-    routeState: string = "free"; // "DA" | "TP" | "free"
+    routeState: "DA" | "TP" | "free" = "free";
 
     view: {
         line?: Snap.Element;
@@ -20,15 +20,6 @@ class Track extends Gate {
     constructor(_id: string, _view: ViewConstructor) {
         super(_id);
         this.createView(_view);
-        this.updateView();
-    }
-
-    changeRouteState(routeType: string, gateFrom: Gate, gateTo: Gate) {
-        if(this.routeState === routeType) {
-            this.routeState = "free";
-        }else {
-            this.routeState = routeType;
-        }
         this.updateView();
     }
 

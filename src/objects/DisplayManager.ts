@@ -96,6 +96,16 @@ class DisplayManager {
             stopBtnCircle: {
                 off: "brown",
                 on: "red"
+            },
+            routeBtnBg: {
+                DA: {
+                    off: "grey",
+                    on: "white"
+                },
+                TP: {
+                    off: "brown",
+                    on: "#F08040"
+                }
             }
         },
         attr: {
@@ -162,7 +172,6 @@ class DisplayManager {
                 DA: {
                     stroke: "black",
                     strokeWidth: 0.3,
-                    fill: "grey",
                     rx: 2,
                     ry: 2,
                     padding: 1.5
@@ -170,7 +179,6 @@ class DisplayManager {
                 TP: {
                     stroke: "black",
                     strokeWidth: 0.3,
-                    fill: "brown",
                     rx: 2,
                     ry: 2,
                     padding: 1.5
