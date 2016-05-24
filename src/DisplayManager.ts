@@ -1,4 +1,4 @@
-/// <reference path="../lib/snapsvg.d.ts" />
+/// <reference path="lib/snapsvg.d.ts" />
 
 /**
  *

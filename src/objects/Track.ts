@@ -1,5 +1,5 @@
 import Gate from "./Gate";
-import DisplayManager from "./DisplayManager";
+import DisplayManager from "../DisplayManager";
 
 /**
  *

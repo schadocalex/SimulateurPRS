@@ -1,7 +1,8 @@
 import Gate from "./Gate";
-import DisplayManager from "./DisplayManager";
+import DisplayManager from "../DisplayManager";
+import Config from "../Config";
 
-enum State { LEFT, RIGHT, UNKNOWN };
+enum State { LEFT, RIGHT, UNKNOWN }
 
 /**
  *
@@ -13,7 +14,7 @@ class Switch extends Gate {
         right?: Gate;
     } = {};
 
-    state: State = State.UNKNOWN;
+    state: State = State.LEFT;
     isMoving: boolean = false;
     combinedSwitch: Switch = null;
 
@@ -53,7 +54,7 @@ class Switch extends Gate {
             this.state = stateToGo;
             this.updateView();
             this.isMoving = false;
-        }, 500);
+        }, Config.duration.switchChange);
 
         this.combinedSwitch && this.combinedSwitch.MoveTo(dir);
     }

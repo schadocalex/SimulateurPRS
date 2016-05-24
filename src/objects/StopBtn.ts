@@ -1,4 +1,4 @@
-import DisplayManager from "./DisplayManager";
+import DisplayManager from "../DisplayManager";
 import El from "./El";
 import Source from "./Source";
 import Gate from "./Gate";

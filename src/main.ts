@@ -1,6 +1,6 @@
 /// <reference path="./lib/snapsvg.d.ts" />
 
-import DisplayManager from "./objects/DisplayManager";
+import DisplayManager from "./DisplayManager";
 import Track from "./objects/Track";
 import Switch from "./objects/Switch";
 import Gate from "./objects/Gate";
@@ -12,8 +12,8 @@ import StopBtn from "./objects/StopBtn";
 DisplayManager.init({
     vw: 280,
     vh: 200,
-    w: 1120,
-    h: 800,
+    w: 840,
+    h: 600,
     TCO: {
         pos: {
             x: 0,

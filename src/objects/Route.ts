@@ -1,11 +1,12 @@
-import DisplayManager from "./DisplayManager";
+import DisplayManager from "../DisplayManager";
 import El from "./El";
 import Source from "./Source";
 import Zone from "./Zone";
 import Gate from "./Gate";
 import Switch from "./Switch";
+import Config from "../Config";
 
-enum State { SAVED, PREPARING, ESTABLISHED, RELEASED };
+enum State { SAVED, PREPARING, ESTABLISHED, RELEASED }
 
 /**
  *
@@ -41,7 +42,7 @@ class Route extends El {
         this.createView(_view);
         this.updateView();
 
-        setInterval(() => this.Update(), 100);
+        setInterval(() => this.Update(), 50);
     }
 
     changeState(state: State) {
@@ -262,7 +263,7 @@ class Route extends El {
                     break;
                 case State.PREPARING:
                 case State.SAVED:
-                    let timeBetweenBlink = 500;
+                    let timeBetweenBlink = Config.duration.blinkButtonInterval;
                     if ((Date.now() % (timeBetweenBlink * 2)) < timeBetweenBlink) {
                         !this.isTP && (btnDA = btnDA === "off" ? "on" : "off");
                         this.isTP && (btnTP = btnTP === "off" ? "on" : "off");
