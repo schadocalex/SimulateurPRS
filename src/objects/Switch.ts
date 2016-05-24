@@ -1,6 +1,8 @@
 import Gate from "./Gate";
 import DisplayManager from "./DisplayManager";
 
+enum State { LEFT, RIGHT, UNKNOWN };
+
 /**
  *
  */
@@ -11,8 +13,9 @@ class Switch extends Gate {
         right?: Gate;
     } = {};
 
-    state: "left" | "right" | "unknown" = "unknown";
-    routeState: "DAL" | "DAR" | "TPL" | "TPR" | "free" = "free"; // DA/TP Left/Right
+    state: State = State.UNKNOWN;
+    isMoving: boolean = false;
+    combinedSwitch: Switch = null;
 
     view: {
         leftLine?: Snap.Element;
@@ -27,6 +30,52 @@ class Switch extends Gate {
         this.createView(_view);
         this.updateView();
     }
+
+    static combinedSwitches(switch1: Switch, switch2: Switch) {
+        switch1.combinedSwitch = switch2;
+        switch2.combinedSwitch = switch1;
+    }
+
+    //////////////////////////////////////////////////
+    // Logic
+    //////////////////////////////////////////////////
+
+    MoveTo(dir: string) {
+        var stateToGo = this.convertStringToState(dir);
+
+        if(this.isMoving || this.state === stateToGo || this.combinedSwitch && this.combinedSwitch.isLocked())
+            return;
+        this.isMoving = true;
+
+        this.state = State.UNKNOWN;
+        this.updateView();
+        setTimeout(() => {
+            this.state = stateToGo;
+            this.updateView();
+            this.isMoving = false;
+        }, 500);
+
+        this.combinedSwitch && this.combinedSwitch.MoveTo(dir);
+    }
+
+    MatchState(dir: string) {
+        return this.state === this.convertStringToState(dir);
+    }
+
+    convertStringToState(s: string) {
+        switch(s) {
+            case "left":
+                return State.LEFT;
+            case "right":
+                return State.RIGHT;
+            default:
+                return State.UNKNOWN;
+        }
+    }
+
+    //////////////////////////////////////////////////
+    // View
+    //////////////////////////////////////////////////
 
     createView(_view: ViewConstructor) {
         // Convert points
@@ -64,42 +113,23 @@ class Switch extends Gate {
     updateView() {
         // Update the switch state
         this.view.leftLed.attr({
-            fill: DisplayManager.cfg.color.switchLed[this.state === "left" ? "on" : "off"]
+            fill: DisplayManager.cfg.color.switchLed[this.state === State.LEFT ? "on" : "off"]
         });
         this.view.rightLed.attr({
-            fill: DisplayManager.cfg.color.switchLed[this.state === "right" ? "on" : "off"]
+            fill: DisplayManager.cfg.color.switchLed[this.state === State.RIGHT ? "on" : "off"]
         });
 
-        // Update the route color
-        switch(this.routeState) {
-            case "DAL":
-            case "TPL":
-                this.view.leftLine.attr({
-                    stroke: DisplayManager.cfg.color.route[this.routeState.slice(0, 2)]
-                });
-                this.view.rightLine.attr({
-                    stroke: DisplayManager.cfg.color.route.free
-                });
-                this.view.leftLine.insertAfter(this.view.rightLine);
-                break;
-            case "DAR":
-            case "TPR":
-                this.view.leftLine.attr({
-                    stroke: DisplayManager.cfg.color.route.free
-                });
-                this.view.rightLine.attr({
-                    stroke: DisplayManager.cfg.color.route[this.routeState.slice(0, 2)]
-                });
-                this.view.rightLine.insertAfter(this.view.leftLine);
-                break;
-            case "free":
-                this.view.leftLine.attr({
-                    stroke: DisplayManager.cfg.color.route.free
-                });
-                this.view.rightLine.attr({
-                    stroke: DisplayManager.cfg.color.route.free
-                });
-                break;
+        this.view.leftLine.attr({
+            stroke: DisplayManager.cfg.color.route[this.state === State.LEFT ? this.routeType : "free"]
+        });
+        this.view.rightLine.attr({
+            stroke: DisplayManager.cfg.color.route[this.state === State.RIGHT ? this.routeType : "free"]
+        });
+
+        if(this.state === State.RIGHT) {
+            this.view.rightLine.insertAfter(this.view.leftLine);
+        } else {
+            this.view.leftLine.insertAfter(this.view.rightLine);
         }
     }
 }

@@ -10,8 +10,6 @@ class Track extends Gate {
         right?: Gate;
     } = {};
 
-    routeState: "DA" | "TP" | "free" = "free";
-
     view: {
         line?: Snap.Element;
         label?: Snap.Element;
@@ -22,6 +20,14 @@ class Track extends Gate {
         this.createView(_view);
         this.updateView();
     }
+
+    //////////////////////////////////////////////////
+    // Logic
+    //////////////////////////////////////////////////
+
+    //////////////////////////////////////////////////
+    // View
+    //////////////////////////////////////////////////
 
     createView(_view: ViewConstructor) {
         // Create the line
@@ -44,7 +50,7 @@ class Track extends Gate {
 
     updateView() {
         this.view.line.attr({
-            stroke: DisplayManager.cfg.color.route[this.routeState]
+            stroke: DisplayManager.cfg.color.route[this.routeType]
         });
     }
 }

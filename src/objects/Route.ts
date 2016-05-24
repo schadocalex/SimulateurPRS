@@ -3,8 +3,9 @@ import El from "./El";
 import Source from "./Source";
 import Zone from "./Zone";
 import Gate from "./Gate";
+import Switch from "./Switch";
 
-enum State { SAVED, INTERLOCKED, ESTABLISHED, RELEASED };
+enum State { SAVED, PREPARING, ESTABLISHED, RELEASED };
 
 /**
  *
@@ -16,6 +17,7 @@ class Route extends El {
     transit: "left" | "right";
     zones: Zone[] = [];
     gates: Gate[] = [];
+    switchDirs: string[] = [];
     state: State = State.RELEASED;
 
     view: {
@@ -26,7 +28,7 @@ class Route extends El {
     } = {};
     timeoutBlink = null;
 
-    constructor(_id: string, _source: Source, _zones: Zone[], _gates: Gate[], _transit, _TP: boolean, _view: ViewConstructor) {
+    constructor(_id: string, _source: Source, _zones: Zone[], _gates: Gate[], _switchDirs: string[], _transit, _TP: boolean, _view: ViewConstructor) {
         super(_id);
 
         this.hasTP = _TP;
@@ -34,13 +36,12 @@ class Route extends El {
         this.transit = _transit;
         this.zones = _zones;
         this.gates = _gates;
+        this.switchDirs = _switchDirs;
 
         this.createView(_view);
         this.updateView();
-    }
 
-    onClick(routeType: string) {
-        this.Order(routeType === "TP");
+        setInterval(() => this.Update(), 100);
     }
 
     changeState(state: State) {
@@ -48,10 +49,54 @@ class Route extends El {
         this.updateView();
     }
 
+    changeTP(TP: boolean) {
+        this.isTP = TP;
+        this.updateView();
+    }
+
     //////////////////////////////////////////////////
     // Logic
     //////////////////////////////////////////////////
 
+    /**
+     * Called when a click on the route button is pressed
+     * @param routeType
+     */
+    onClick(routeType: string) {
+        switch(this.state) {
+            case State.RELEASED:
+                this.Order(routeType === "TP");
+                break;
+            default:
+                let TP = routeType === "TP";
+                if(this.hasTP && TP !== this.isTP) {
+                    this.changeTP(TP);
+                } else {
+                    this.ManualRelease();
+                }
+                break;
+        }
+    }
+
+    Update() {
+        switch(this.state) {
+            case State.SAVED:
+                this.Save();
+                break;
+            case State.PREPARING:
+                this.Prepare();
+                break;
+            case State.ESTABLISHED:
+                this.Establish();
+                break;
+        }
+    }
+
+    /**
+     * Order a route. If all transits are free, go to Save() step.
+     * @param TP - true if TP mode is asked.
+     * @constructor
+     */
     Order(TP: boolean) {
         if(this.state === State.RELEASED) {
             if(this.areAllCompatibleTransitFree()) {
@@ -61,28 +106,55 @@ class Route extends El {
         }
     }
 
+    /**
+     * Save a route. If all opposite transits are free, go to Prepare() step.
+     * @constructor
+     */
     Save() {
         this.changeState(State.SAVED);
-        this.lockTransits();
 
-        if(this.areAllOppositeTransitFree()) {
+        if(this.areAllCompatibleTransitFree() && this.areAllOppositeTransitFree()) {
+            this.Prepare();
+        }
+    }
+
+    /**
+     * Prepare a route. Change all switches if incorrect and then go to Interlock() step.
+     * @constructor
+     */
+    Prepare() {
+        this.changeState(State.PREPARING);
+        this.lockTransits();
+        this.moveSwitches();
+        if(this.areAllSwitchesCorrect()) {
             this.Interlock();
         }
     }
 
+    /**
+     * Lock transits to prevent others routes to be ordered in the same switches.
+     * @constructor
+     */
     Interlock() {
-
+        this.Establish();
     }
 
+    /**
+     * Establish the route by switch off the stop lights.
+     * @constructor
+     */
     Establish() {
-
-    }
-
-    AutoReleaseZone(zone: Zone) {
-
+        this.changeState(State.ESTABLISHED);
+        this.showInTCO();
     }
 
     ManualRelease() {
+        this.changeState(State.RELEASED);
+        this.hideInTCO();
+        this.unlockTransits();
+    }
+
+    AutoReleaseZone(zone: Zone) {
 
     }
 
@@ -105,8 +177,26 @@ class Route extends El {
         return this.zones.every(zone => !zone.IsLocked(transitName));
     }
 
+    moveSwitches() {
+        this.gates.forEach((gate, i) => {
+            if(gate instanceof Switch) {
+                gate.MoveTo(this.switchDirs[i]);
+            }
+        });
+    }
+
+    areAllSwitchesCorrect() {
+        return this.gates.every((gate, i) => {
+            if(gate instanceof Switch) {
+                return gate.MatchState(this.switchDirs[i]);
+            } else {
+                return true;
+            }
+        });
+    }
+
     lockTransits() {
-        this.zones.forEach(zone => zone.Lock(this.transit));
+        this.zones.forEach(zone => zone.Lock(this, this.transit));
     }
 
     unlockTransits() {
@@ -114,7 +204,15 @@ class Route extends El {
     }
 
     unlockTransit(zone: Zone) {
-        zone.Unlock(this.transit)
+        zone.Unlock(this, this.transit);
+    }
+
+    showInTCO() {
+        this.gates.forEach(gate => gate.Lock(this, this.isTP));
+    }
+
+    hideInTCO() {
+        this.gates.forEach(gate => gate.Unlock(this));
     }
 
     //////////////////////////////////////////////////
@@ -158,11 +256,11 @@ class Route extends El {
             let btnTP = "off";
 
             switch (this.state) {
-                case State.INTERLOCKED:
                 case State.ESTABLISHED:
                     btnDA = this.isTP ? "off" : "on";
                     btnTP = this.isTP ? "on" : "off";
                     break;
+                case State.PREPARING:
                 case State.SAVED:
                     let timeBetweenBlink = 500;
                     if ((Date.now() % (timeBetweenBlink * 2)) < timeBetweenBlink) {

@@ -8,8 +8,8 @@ import El from "./El";
 class Zone extends El {
     gates: Gate[] = [];
     transit = {
-        left: false,
-        right: false
+        left: null,
+        right: null
     };
 
     view: {
@@ -29,16 +29,20 @@ class Zone extends El {
     // Logic
     //////////////////////////////////////////////////
 
-    Lock(_transit: string) {
-        this.transit[_transit] = true;
+    Lock(locker: any, _transit: string) {
+        if(this.transit[_transit] == null) {
+            this.transit[_transit] = locker;
+        }
     }
 
-    Unlock(_transit: string) {
-        this.transit[_transit] = false;
+    Unlock(locker: any, _transit: string) {
+        if(this.IsLocked(_transit) && this.transit[_transit] === locker) {
+            this.transit[_transit] = null;
+        }
     }
 
     IsLocked(_transit: string) {
-        return this.transit[_transit] === true;
+        return this.transit[_transit] != null;
     }
 
     //////////////////////////////////////////////////

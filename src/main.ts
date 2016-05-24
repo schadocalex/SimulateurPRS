@@ -216,6 +216,10 @@ var gare = {
         ["102", "right", "2", "left"],
         ["2", "right", "110", "left"]
     ],
+    combinedSwitches: [
+        ["103a", "103b"],
+        ["109a", "109b"]
+    ],
     zones: {
         "z10": {
             gates: ["DE"],
@@ -444,6 +448,7 @@ var gare = {
             source: "AE_right",
             zones: ["z13", "z15"],
             gates: ["103a", "1"],
+            switchDirs: ["left", null],
             TP: true,
             transit: "right",
             view: {
@@ -460,6 +465,7 @@ var gare = {
             source: "AE_right",
             zones: ["z13", "z16", "z18"],
             gates: ["103a", "103b", "A"],
+            switchDirs: ["right", "right", null],
             TP: false,
             transit: "right",
             view: {
@@ -475,6 +481,7 @@ var gare = {
             source: "1_right",
             zones: ["z17", "z21", "z23"],
             gates: ["109b", "21", "DT"],
+            switchDirs: ["right", null, null],
             TP: true,
             transit: "right",
             view: {
@@ -491,6 +498,7 @@ var gare = {
             source: "A_right",
             zones: ["z22", "z17", "z21", "z23"],
             gates: ["109a", "109b", "21", "DT"],
+            switchDirs: ["left", "left", null, null],
             TP: false,
             transit: "right",
             view: {
@@ -506,6 +514,7 @@ var gare = {
             source: "DT_left",
             zones: ["z17", "z22", "z18"],
             gates: ["109b", "109a", "A"],
+            switchDirs: ["left", "left", null],
             TP: false,
             transit: "left",
             view: {
@@ -521,6 +530,7 @@ var gare = {
             source: "AT_left",
             zones: ["z26", "z22", "z18"],
             gates: ["110", "109a", "A"],
+            switchDirs: ["right", "right", null],
             TP: false,
             transit: "left",
             view: {
@@ -536,6 +546,7 @@ var gare = {
             source: "AT_left",
             zones: ["z26", "z34"],
             gates: ["110", "2"],
+            switchDirs: ["left",  null],
             TP: true,
             transit: "left",
             view: {
@@ -552,6 +563,7 @@ var gare = {
             source: "2_left",
             zones: ["z12", "z10"],
             gates: ["102", "DE"],
+            switchDirs: ["right",  null],
             TP: true,
             transit: "left",
             view: {
@@ -568,6 +580,7 @@ var gare = {
             source: "A_left",
             zones: ["z16", "z12", "z10"],
             gates: ["103b", "102", "DE"],
+            switchDirs: ["left", "left",  null],
             TP: false,
             transit: "left",
             view: {
@@ -611,6 +624,9 @@ Object.getOwnPropertyNames(gare.gates).forEach((gateName) => {
 // Add links
 gare.wires.forEach((wire) => Gate.addLink(gates[wire[0]], wire[1], gates[wire[2]], wire[3]));
 
+// Add combined switches
+gare.combinedSwitches.forEach((s) => Switch.combinedSwitches(gates[s[0]], gates[s[1]]));
+
 // Add zones
 var zones = {};
 Object.getOwnPropertyNames(gare.zones).forEach((zoneName) => {
@@ -641,5 +657,5 @@ Object.getOwnPropertyNames(gare.routes).forEach((routeName) => {
     let source = sources[route.source];
     let routeZones = route.zones.map((name) => zones[name]);
     let routeGates = route.gates.map((name) => gates[name]);
-    routes[routeName] = new Route(routeName, source, routeZones, routeGates, route.transit, route.TP, route.view);
+    routes[routeName] = new Route(routeName, source, routeZones, routeGates, route.switchDirs, route.transit, route.TP, route.view);
 });
