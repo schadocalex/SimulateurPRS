@@ -5,6 +5,7 @@ import Zone from "./Zone";
 import Gate from "./Gate";
 import Switch from "./Switch";
 import Config from "../Config";
+import Train from "./Train";
 
 enum State { SAVED, PREPARING, ESTABLISHED, RELEASED }
 
@@ -21,6 +22,11 @@ class Route extends El {
     gates: Gate[] = [];
     switchDirs: string[] = [];
     state: State = State.RELEASED;
+    currentTrain: Train;
+
+    gatesByZone = {};
+    notFreeZones: Zone[];
+    routeWithoutTrain: boolean = true;
 
     view: {
         textBg?: {
@@ -45,7 +51,9 @@ class Route extends El {
         this.createView(_view);
         this.updateView();
 
-        setInterval(() => this.Update(), 50);
+        this.zones.forEach(zone => this.gatesByZone[zone.id] = zone.gates.filter(gate => this.gates.indexOf(gate) >= 0));
+
+        setInterval(() => this.Update(), 100);
     }
 
     changeState(state: State) {
@@ -67,16 +75,20 @@ class Route extends El {
      * @param routeType
      */
     onClick(routeType: string) {
+        let TP = routeType === "TP";
+
         switch(this.state) {
             case State.RELEASED:
-                this.Order(routeType === "TP");
+                this.Order(TP);
                 break;
-            default:
-                let TP = routeType === "TP";
-                if(this.hasTP && TP !== this.isTP) {
-                    this.changeTP(TP);
-                } else {
-                    this.ManualRelease();
+            case State.SAVED:
+            case State.PREPARING:
+                if(this.notFreeZones.length === this.zones.length || this.state !== State.ESTABLISHED) {
+                    if (this.hasTP && TP !== this.isTP) {
+                        this.changeTP(TP);
+                    } else {
+                        this.ManualRelease();
+                    }
                 }
                 break;
         }
@@ -89,9 +101,6 @@ class Route extends El {
                 break;
             case State.PREPARING:
                 this.Prepare();
-                break;
-            case State.ESTABLISHED:
-                this.Establish();
                 break;
         }
     }
@@ -116,7 +125,7 @@ class Route extends El {
      */
     Save() {
         this.changeState(State.SAVED);
-
+        this.notFreeZones = this.zones.slice();
         if(this.areAllCompatibleTransitFree() && this.areAllOppositeTransitFree()) {
             this.Prepare();
         }
@@ -148,10 +157,8 @@ class Route extends El {
      * @constructor
      */
     Establish() {
-        if(!this.IsEstablished()) {
-            this.changeState(State.ESTABLISHED);
-            this.onEstablished();
-        }
+        this.changeState(State.ESTABLISHED);
+        this.onEstablished();
         this.showInTCO();
     }
 
@@ -166,8 +173,25 @@ class Route extends El {
         this.unlockTransits();
     }
 
-    AutoReleaseZone(zone: Zone) {
+    AutoReleaseGates(gates: Gate[]) {
+        this.notFreeZones = this.notFreeZones.filter(zone => {
+            let everyGatesAreFreeInTheZone = this.gatesByZone[zone.id].every(gate => gates.indexOf(gate) >= 0);
+            if(everyGatesAreFreeInTheZone && !this.isTP) {
+                this.unlockTransit(zone);
+                this.hideZoneInTCO(zone);
+            }
+            return !everyGatesAreFreeInTheZone;
+        });
 
+        // If all zones are free, release the route
+        if(this.notFreeZones.length === 0) {
+            if(!this.isTP) {
+                this.changeState(State.RELEASED);
+            } else {
+                this.Establish();
+                this.notFreeZones = this.zones.slice();
+            }
+        }
     }
 
     //////////////////////////////////////////////////
@@ -224,7 +248,11 @@ class Route extends El {
     }
 
     hideInTCO() {
-        this.gates.forEach(gate => gate.Unlock(this));
+        this.zones.forEach(zone => this.hideZoneInTCO(zone));
+    }
+
+    hideZoneInTCO(zone: Zone) {
+        this.gatesByZone[zone.id].forEach(gate => gate.Unlock(this));
     }
 
     //////////////////////////////////////////////////

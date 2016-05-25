@@ -19,9 +19,13 @@ class TrainManager {
         this.routes = _routes;
         this.sources = _sources;
 
-        this.trains.forEach(train => train.onAnnounced = () => this.onAnnounced(train));
-        this.trains.forEach(train => train.onArrived = () => this.onArrived(train));
+        this.trains.forEach(train => {
+            train.onAnnounced = () => this.onAnnounced(train);
+            train.onArrived = () => this.onArrived(train);
+            train.onReleaseGates = (gates) => this.onReleaseGates(train, gates)
+        });
         this.routes.forEach(route => route.onEstablished = () => this.onEstablished(route));
+        this.sources.forEach(source => this.waitingTrains[source.id] = []);
     }
 
     onAnnounced(train: Train) {
@@ -32,18 +36,27 @@ class TrainManager {
 
     onArrived(train: Train) {
         let route = this.getRouteFromSource(train.baseSource);
-        if(route != null) {
+        if(route != null && route.routeWithoutTrain) {
+            route.routeWithoutTrain = false;
             train.AddRoute(route);
         } else {
-            this.waitingTrains[train.baseSource.id] = train;
+            this.waitingTrains[train.baseSource.id].push(train);
         }
     }
 
+    onReleaseGates(train: Train, gates: Gate[]) {
+        this.routes
+            .filter(route => route.IsEstablished())
+            .forEach(route => route.currentTrain === train && route.AutoReleaseGates(gates));
+    }
+
     onEstablished(route: Route) {
-        let waitingTrain = this.waitingTrains[route.source.id];
+        let waitingTrain = this.waitingTrains[route.source.id].shift();
         if(waitingTrain != null) {
-            this.waitingTrains[route.source.id] = null;
+            route.routeWithoutTrain = false;
             waitingTrain.AddRoute(route);
+        } else {
+            route.routeWithoutTrain = true;
         }
     }
 

@@ -56,14 +56,13 @@ class Train {
     AddRoute(route: Route) {
         this.gates = this.gates.concat(route.gates);
         this.baseSource = route.nextSource;
+        route.currentTrain = this;
     }
 
     Update(dt: number) {
         if(this.gates.length === 0) {
             return;
         }
-
-        console.log("update");
 
         let dist = this.velocity * dt;
         let gateInfo = this.getGateInfoByPos(this.pos + dist);
@@ -92,11 +91,14 @@ class Train {
         this.gates.forEach((gate, i) => {
             gate.Train(minIndex <= i && i <= maxIndex);
         });
+        this.onReleaseGates(this.gates.slice(0, minIndex));
 
         if(minIndex === this.gates.length && this.baseSource == null) {
             clearInterval(this.updateIntervalID);
         }
     }
+
+    onReleaseGates(gate: Gate[]){}
 
     getGateInfoByPos(pos: number) {
         let iPos = 0;

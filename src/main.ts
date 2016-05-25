@@ -717,4 +717,5 @@ Object.getOwnPropertyNames(gare.trains).forEach((trainName) => {
 
 var trainsArray = Object.getOwnPropertyNames(trains).map((trainName) => trains[trainName]);
 var routesArray = Object.getOwnPropertyNames(routes).map((routeName) => routes[routeName]);
-var trainManager = new TrainManager(trainsArray, routesArray);
+var sourcesArray = Object.getOwnPropertyNames(sources).map((sourceName) => sources[sourceName]);
+var trainManager = new TrainManager(trainsArray, routesArray, sourcesArray);
