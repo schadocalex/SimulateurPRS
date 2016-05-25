@@ -8,6 +8,7 @@ abstract class Gate extends El {
     _locker: any = null;
 
     routeType: string = "free";
+    isTrainOn: boolean = false;
 
     /**
      * Add a link between two Gate objects at the given ports.
@@ -41,6 +42,13 @@ abstract class Gate extends El {
     isLocked() {
         return this._locker != null;
     }
+
+    Train(isTrainOn: boolean) {
+        this.isTrainOn = isTrainOn;
+        this.updateView();
+    }
+
+    abstract GetLength();
 
     //////////////////////////////////////////////////
     // View

@@ -1,6 +1,7 @@
 import Gate from "./Gate";
 import DisplayManager from "../DisplayManager";
 import Config from "../Config";
+import StopBtn from "./StopBtn";
 
 enum State { LEFT, RIGHT, UNKNOWN }
 
@@ -17,6 +18,9 @@ class Switch extends Gate {
     state: State = State.LEFT;
     isMoving: boolean = false;
     combinedSwitch: Switch = null;
+
+    leftLength: number;
+    rightLength: number;
 
     view: {
         leftLine?: Snap.Element;
@@ -42,7 +46,7 @@ class Switch extends Gate {
     //////////////////////////////////////////////////
 
     MoveTo(dir: string) {
-        var stateToGo = this.convertStringToState(dir);
+        var stateToGo = Switch.convertStringToState(dir);
 
         if(this.isMoving || this.state === stateToGo || this.combinedSwitch && this.combinedSwitch.isLocked())
             return;
@@ -60,10 +64,21 @@ class Switch extends Gate {
     }
 
     MatchState(dir: string) {
-        return this.state === this.convertStringToState(dir);
+        return this.state === Switch.convertStringToState(dir);
     }
 
-    convertStringToState(s: string) {
+    GetLength() {
+        switch(this.state) {
+            case State.LEFT:
+                return this.leftLength;
+            case State.RIGHT:
+                return this.rightLength;
+            case State.UNKNOWN:
+                return 0;
+        }
+    }
+
+    static convertStringToState(s: string) {
         switch(s) {
             case "left":
                 return State.LEFT;
@@ -91,6 +106,14 @@ class Switch extends Gate {
         this.view.leftLine = DisplayManager.paper.polyline(loneLeftPoints).attr(DisplayManager.cfg.attr.line);
         this.view.rightLine = DisplayManager.paper.polyline(loneRightPoints).attr(DisplayManager.cfg.attr.line);
 
+        // Compute length
+        let leftPath = DisplayManager.paper.path("M" + [lonePoints, centerPoint, leftPoints].map(p => p.join(" ")).join("L"));
+        this.leftLength = leftPath.getTotalLength();
+        leftPath.remove();
+        let rightPath = DisplayManager.paper.path("M" + [lonePoints, centerPoint, rightPoints].map(p => p.join(" ")).join("L"));
+        this.rightLength = rightPath.getTotalLength();
+        rightPath.remove();
+
         // Create the leds
         ["left", "right"].forEach((dir) => {
             let path = "M" + [_view.center].concat(_view[dir]).map((p) => p.x + "," + p.y).join("L");
@@ -105,7 +128,7 @@ class Switch extends Gate {
         if(_view.label != null) {
             let labelX = _view.label.pos.x;
             let labelY = _view.label.pos.y
-                + DisplayManager.cfg.attr.switchLabel["font-size"] * 0.37
+                + DisplayManager.cfg.attr.switchLabel.fontSize * 0.37
                 + DisplayManager.cfg.attr.switchLabel.offsetY * (_view.label.above ? -1 : 1);
             DisplayManager.paper.text(labelX, labelY, _view.label.value).attr(DisplayManager.cfg.attr.switchLabel);
         }
@@ -120,11 +143,13 @@ class Switch extends Gate {
             fill: DisplayManager.cfg.color.switchLed[this.state === State.RIGHT ? "on" : "off"]
         });
 
+        let leftTrainRoute = this.state === State.LEFT ? (this.isTrainOn ? "trainOn" : this.routeType) : "free";
+        let rightTrainRoute = this.state === State.RIGHT ? (this.isTrainOn ? "trainOn" : this.routeType) : "free";
         this.view.leftLine.attr({
-            stroke: DisplayManager.cfg.color.route[this.state === State.LEFT ? this.routeType : "free"]
+            stroke: DisplayManager.cfg.color.route[leftTrainRoute]
         });
         this.view.rightLine.attr({
-            stroke: DisplayManager.cfg.color.route[this.state === State.RIGHT ? this.routeType : "free"]
+            stroke: DisplayManager.cfg.color.route[rightTrainRoute]
         });
 
         if(this.state === State.RIGHT) {

@@ -12,7 +12,7 @@ class DisplayManager {
         DisplayManager.paper = Snap(_ini.w, _ini.h);
         DisplayManager.paper.attr({
             viewBox: [0, 0, _ini.vw, _ini.vh].join(" "),
-            style: "background-color:" + DisplayManager.cfg.color.background
+            style:  "background-color:" +  DisplayManager.cfg.color.background + ";display:block;margin:auto;"
         });
 
         // TCO
@@ -72,10 +72,15 @@ class DisplayManager {
             route: {
                 DA: "yellow",
                 TP: "orange",
-                free: "grey"
+                free: "grey",
+                trainOn: "red"
             },
             switchLed: {
                 off: "black",
+                on: "white"
+            },
+            led: {
+                off: "grey",
                 on: "white"
             },
             TCO: {
@@ -133,20 +138,30 @@ class DisplayManager {
             },
             switchLabel: {
                 fill: "yellow",
-                "font-size": 3,
-                "font-family": "Arial",
-                "text-anchor": "middle",
+                fontSize: 3,
+                fontFamily: "Arial",
+                textAnchor: "middle",
                 offsetY: 3
             },
             switchLed: {
                 distanceFromCenter: 7,
                 sizeRatio: 0.45
             },
+            ledLabel: {
+                fill: "lightgrey",
+                fontSize: 3,
+                fontFamily: "Arial",
+                textAnchor: "middle",
+                offsetY: 4
+            },
+            led: {
+                size: 1.3
+            },
             zoneLabel: {
                 fill: "lime",
                 "font-size": 4,
-                "font-family": "Arial",
-                "text-anchor": "middle",
+                fontFamily: "Arial",
+                textAnchor: "middle",
                 offsetY: 4
             },
             sourceLabel: {

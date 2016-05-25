@@ -8,12 +8,15 @@ import Zone from "./objects/Zone";
 import Source from "./objects/Source";
 import Route from "./objects/Route";
 import StopBtn from "./objects/StopBtn";
+import LedLabel from "./objects/LedLabel";
+import TrainManager from "./TrainManager";
+import Train from "./objects/Train";
 
 DisplayManager.init({
     vw: 280,
-    vh: 200,
+    vh: 190,
     w: 840,
-    h: 600,
+    h: 570,
     TCO: {
         pos: {
             x: 0,
@@ -446,6 +449,7 @@ var gare = {
     routes: {
         "AE_1": {
             source: "AE_right",
+            nextSource: "1_right",
             zones: ["z13", "z15"],
             gates: ["103a", "1"],
             switchDirs: ["left", null],
@@ -463,6 +467,7 @@ var gare = {
         },
         "AE_A": {
             source: "AE_right",
+            nextSource: "A_right",
             zones: ["z13", "z16", "z18"],
             gates: ["103a", "103b", "A"],
             switchDirs: ["right", "right", null],
@@ -479,6 +484,7 @@ var gare = {
         },
         "1_DT": {
             source: "1_right",
+            nextSource: null,
             zones: ["z17", "z21", "z23"],
             gates: ["109b", "21", "DT"],
             switchDirs: ["right", null, null],
@@ -496,6 +502,7 @@ var gare = {
         },
         "A_DT": {
             source: "A_right",
+            nextSource: null,
             zones: ["z22", "z17", "z21", "z23"],
             gates: ["109a", "109b", "21", "DT"],
             switchDirs: ["left", "left", null, null],
@@ -512,6 +519,7 @@ var gare = {
         },
         "DT_A": {
             source: "DT_left",
+            nextSource: "A_left",
             zones: ["z17", "z22", "z18"],
             gates: ["109b", "109a", "A"],
             switchDirs: ["left", "left", null],
@@ -528,6 +536,7 @@ var gare = {
         },
         "AT_A": {
             source: "AT_left",
+            nextSource: "A_left",
             zones: ["z26", "z22", "z18"],
             gates: ["110", "109a", "A"],
             switchDirs: ["right", "right", null],
@@ -544,6 +553,7 @@ var gare = {
         },
         "AT_2": {
             source: "AT_left",
+            nextSource: "2_left",
             zones: ["z26", "z34"],
             gates: ["110", "2"],
             switchDirs: ["left",  null],
@@ -561,6 +571,7 @@ var gare = {
         },
         "2_DE": {
             source: "2_left",
+            nextSource: null,
             zones: ["z12", "z10"],
             gates: ["102", "DE"],
             switchDirs: ["right",  null],
@@ -578,6 +589,7 @@ var gare = {
         },
         "A_DE": {
             source: "A_left",
+            nextSource: null,
             zones: ["z16", "z12", "z10"],
             gates: ["103b", "102", "DE"],
             switchDirs: ["left", "left",  null],
@@ -603,6 +615,29 @@ var gare = {
                     pos: {x: 0, y: 0}
                 }
             }
+        }
+    },
+    ledLabels: {
+        "announcement_AE": {
+            view: {
+                pos: { x: 12, y: 12 },
+                label: {
+                    value: "Annonce",
+                    pos: {x: 12, y: 12},
+                    above: true
+                }
+            }
+        }
+    },
+    trains: {
+        "trainA": {
+            velocity: 10,
+            length: 30,
+            announcementTime: 5000,
+            arrivalTime: 3000,// /!\
+            maxStopTime: 15000,
+            baseSource: "AE_right",
+            baseAnnouncement: "announcement_AE"
         }
     }
 };
@@ -655,7 +690,31 @@ var routes = {};
 Object.getOwnPropertyNames(gare.routes).forEach((routeName) => {
     let route = gare.routes[routeName];
     let source = sources[route.source];
+    let nextSource = route.nextSource && sources[route.nextSource];
     let routeZones = route.zones.map((name) => zones[name]);
     let routeGates = route.gates.map((name) => gates[name]);
-    routes[routeName] = new Route(routeName, source, routeZones, routeGates, route.switchDirs, route.transit, route.TP, route.view);
+    routes[routeName] = new Route(routeName, source, nextSource, routeZones, routeGates,
+        route.switchDirs, route.transit, route.TP, route.view);
 });
+
+// Create led labels
+var ledLabels = {};
+Object.getOwnPropertyNames(gare.ledLabels).forEach((ledName) => {
+    let led = gare.ledLabels[ledName];
+    ledLabels[ledName] = new LedLabel(ledName, led.view);
+});
+
+// Add trains
+var trains = {};
+Object.getOwnPropertyNames(gare.trains).forEach((trainName) => {
+    let train = gare.trains[trainName];
+    let source = sources[train.baseSource];
+    let ledLabel = ledLabels[train.baseAnnouncement];
+    trains[trainName] = new Train(trainName, train.velocity, train.length,
+        train.announcementTime, train.arrivalTime, train.maxStopTime,
+        source, ledLabel);
+});
+
+var trainsArray = Object.getOwnPropertyNames(trains).map((trainName) => trains[trainName]);
+var routesArray = Object.getOwnPropertyNames(routes).map((routeName) => routes[routeName]);
+var trainManager = new TrainManager(trainsArray, routesArray);

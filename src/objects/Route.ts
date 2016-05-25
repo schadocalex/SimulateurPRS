@@ -15,6 +15,7 @@ class Route extends El {
     hasTP: boolean = false;
     isTP: boolean = false;
     source: Source = null;
+    nextSource: Source = null;
     transit: "left" | "right";
     zones: Zone[] = [];
     gates: Gate[] = [];
@@ -29,11 +30,13 @@ class Route extends El {
     } = {};
     timeoutBlink = null;
 
-    constructor(_id: string, _source: Source, _zones: Zone[], _gates: Gate[], _switchDirs: string[], _transit, _TP: boolean, _view: ViewConstructor) {
+    constructor(_id: string, _source: Source, _nextSource: Source, _zones: Zone[], _gates: Gate[],
+                _switchDirs: string[], _transit, _TP: boolean, _view: ViewConstructor) {
         super(_id);
 
         this.hasTP = _TP;
         this.source = _source;
+        this.nextSource = _nextSource;
         this.transit = _transit;
         this.zones = _zones;
         this.gates = _gates;
@@ -145,8 +148,16 @@ class Route extends El {
      * @constructor
      */
     Establish() {
-        this.changeState(State.ESTABLISHED);
+        if(!this.IsEstablished()) {
+            this.changeState(State.ESTABLISHED);
+            this.onEstablished();
+        }
         this.showInTCO();
+    }
+
+    onEstablished(){}
+    IsEstablished() {
+        return this.state === State.ESTABLISHED;
     }
 
     ManualRelease() {

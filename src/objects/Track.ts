@@ -10,6 +10,8 @@ class Track extends Gate {
         right?: Gate;
     } = {};
 
+    length: number;
+
     view: {
         line?: Snap.Element;
         label?: Snap.Element;
@@ -25,6 +27,10 @@ class Track extends Gate {
     // Logic
     //////////////////////////////////////////////////
 
+    GetLength() {
+        return this.length;
+    }
+
     //////////////////////////////////////////////////
     // View
     //////////////////////////////////////////////////
@@ -33,6 +39,11 @@ class Track extends Gate {
         // Create the line
         let points = _view.line.reduce((pre, cur) => pre.concat([cur.x, cur.y]), []);
         this.view.line = DisplayManager.paper.polyline(points).attr(DisplayManager.cfg.attr.line);
+
+        // Compute length
+        let path = DisplayManager.paper.path("M" + _view.line.reduce((pre, cur) => pre.concat([cur.x, cur.y].join(" ")), []).join("L"));
+        this.length = path.getTotalLength();
+        path.remove();
 
         // Create the label
         if(_view.label != null) {
@@ -50,7 +61,7 @@ class Track extends Gate {
 
     updateView() {
         this.view.line.attr({
-            stroke: DisplayManager.cfg.color.route[this.routeType]
+            stroke: DisplayManager.cfg.color.route[this.isTrainOn ? "trainOn" : this.routeType]
         });
     }
 }
