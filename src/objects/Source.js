@@ -1,34 +1,29 @@
-import DisplayManager from "../DisplayManager";
-import El from "./El";
+var DisplayManager = require("../DisplayManager");
+var El = require("./El");
 
 /**
  *
  */
 class Source extends El {
-    stoplight: "on" | "off" = "on";
-    manualStop: "on" | "off" = "off";
-    ZAp: "on" | "off" = "off";
+    stoplight = "on";
+    manualStop = "off";
+    ZAp = "off";
 
-    view: {
-        label?: Snap.Element;
-        stoplight?: Snap.Element;
-        stoplightLabel?: Snap.Element;
-        ZAp?: Snap.Element;
-    } = {};
+    view = {};
 
-    constructor(_id: string, _view: ViewConstructor) {
+    constructor(_id, _view) {
         super(_id);
 
         this.createView(_view);
         this.updateView();
     }
 
-    setManualStop(state: "on" | "off") {
+    setManualStop(state) {
         this.manualStop = state;
         this.updateView();
     }
 
-    createView(_view: ViewConstructor) {
+    createView(_view) {
         // Create the stoplight
         var rectAttr = DisplayManager.cfg.attr.stoplight.rect;
         var symX = _view.stoplight.dir === "left" ? _view.stoplight.pos.x : null;
@@ -120,21 +115,4 @@ class Source extends El {
         });
     }
 }
-export default Source;
-
-interface Vector {
-    x: number;
-    y: number;
-}
-interface ViewConstructor {
-    label?: {
-        value: string;
-        pos: Vector;
-    };
-    stoplight: {
-        value: string;
-        pos: Vector;
-        dir: "left" | "right";
-    },
-    ZAp:  boolean;
-}
+module.exports = Source;

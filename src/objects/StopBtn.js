@@ -1,21 +1,18 @@
-import DisplayManager from "../DisplayManager";
-import El from "./El";
-import Source from "./Source";
-import Gate from "./Gate";
+var DisplayManager = require("../DisplayManager");
+var El = require("./El");
+var Source = require("./Source");
+var Gate = require("./Gate");
 
 /**
  *
  */
 class StopBtn extends El {
-    sources: Source[] = null;
-    state: "on" | "off" = "off";
+    sources = null;
+    state = "off";
 
-    view: {
-        circleBg?: Snap.Element;
-        arrow?: Snap.Element;
-    } = {};
+    view = {};
 
-    constructor(_id: string, _sources: Source[], _view: ViewConstructor) {
+    constructor(_id, _sources, _view) {
         super(_id);
 
         this.sources = _sources;
@@ -30,7 +27,7 @@ class StopBtn extends El {
         this.updateView();
     }
 
-    createView(_view: ViewConstructor) {
+    createView(_view) {
         // Create the circle
         let btnPos = DisplayManager.convertVectorToGrid(_view.pos);
         this.view.circleBg = DisplayManager.paper.circle(
@@ -54,7 +51,7 @@ class StopBtn extends El {
             .click(() => this.onClick());
     }
 
-    updateView(animated: boolean = true) {
+    updateView(animated = true) {
         this.view.circleBg.attr({
             fill: DisplayManager.cfg.color.stopBtnCircle[this.state]
         });
@@ -63,16 +60,4 @@ class StopBtn extends El {
         }, animated ? 100 : 0);
     }
 }
-export default StopBtn;
-
-interface Vector {
-    x: number;
-    y: number;
-}
-interface ViewConstructor {
-    pos: Vector;
-    label: {
-        value: string;
-        pos: Vector;
-    }
-}
+module.exports = StopBtn;

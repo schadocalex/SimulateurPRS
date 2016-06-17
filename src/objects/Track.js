@@ -1,23 +1,17 @@
-import Gate from "./Gate";
-import DisplayManager from "../DisplayManager";
+var Gate = require("./Gate");
+var DisplayManager = require("../DisplayManager");
 
 /**
  *
  */
 class Track extends Gate {
-    ports: {
-        left?: Gate;
-        right?: Gate;
-    } = {};
+    ports = {};
 
-    length: number;
+    length;
 
-    view: {
-        line?: Snap.Element;
-        label?: Snap.Element;
-    } = {};
+    view = {};
 
-    constructor(_id: string, _view: ViewConstructor) {
+    constructor(_id, _view) {
         super(_id);
         this.createView(_view);
         this.updateView();
@@ -27,7 +21,7 @@ class Track extends Gate {
     // Logic
     //////////////////////////////////////////////////
 
-    GetLength() {
+    getLength() {
         return this.length;
     }
 
@@ -35,7 +29,7 @@ class Track extends Gate {
     // View
     //////////////////////////////////////////////////
 
-    createView(_view: ViewConstructor) {
+    createView(_view) {
         // Create the line
         let points = _view.line.reduce((pre, cur) => pre.concat([cur.x, cur.y]), []);
         this.view.line = DisplayManager.paper.polyline(points).attr(DisplayManager.cfg.attr.line);
@@ -65,16 +59,4 @@ class Track extends Gate {
         });
     }
 }
-export default Track;
-
-interface Vector {
-    x: number;
-    y: number;
-}
-interface ViewConstructor {
-    line: Vector[];
-    label?: {
-        value: string,
-        pos: Vector
-    };
-}
+module.exports = Track;

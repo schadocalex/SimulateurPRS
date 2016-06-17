@@ -1,20 +1,12 @@
-import Train from "./objects/Train";
-import Source from "./objects/Source";
-import Route from "./objects/Route";
-import LedLabel from "./objects/LedLabel";
-import Config from "./Config";
-import Gate from "./objects/Gate";
+var Config = require("./Config");
 
 /**
  *
  */
-class TrainManager {
-    trains: Train[];
-    routes: Route[];
-    sources: Source[];
+module.exports = class TrainManager {
     waitingTrains = {};
 
-    constructor(_trains: Train[], _routes: Route[], _sources: Source[]) {
+    constructor(_trains, _routes, _sources) {
         this.trains = _trains;
         this.routes = _routes;
         this.sources = _sources;
@@ -28,40 +20,39 @@ class TrainManager {
         this.sources.forEach(source => this.waitingTrains[source.id] = []);
     }
 
-    onAnnounced(train: Train) {
+    onAnnounced(train) {
         let ledLabel = train.baseAnnouncement;
-        ledLabel.On();
-        setTimeout(() => ledLabel.Off(), Config.duration.announcement);
+        ledLabel.on();
+        setTimeout(() => ledLabel.off(), Config.duration.announcement);
     }
 
-    onArrived(train: Train) {
+    onArrived(train) {
         let route = this.getRouteFromSource(train.baseSource);
         if(route != null && route.routeWithoutTrain) {
             route.routeWithoutTrain = false;
-            train.AddRoute(route);
+            train.addRoute(route);
         } else {
             this.waitingTrains[train.baseSource.id].push(train);
         }
     }
 
-    onReleaseGates(train: Train, gates: Gate[]) {
+    onReleaseGates(train, gates) {
         this.routes
-            .filter(route => route.IsEstablished())
-            .forEach(route => route.currentTrain === train && route.AutoReleaseGates(gates));
+            .filter(route => route.isEstablished())
+            .forEach(route => route.currentTrain === train && route.autoReleaseGates(gates));
     }
 
-    onEstablished(route: Route) {
+    onEstablished(route) {
         let waitingTrain = this.waitingTrains[route.source.id].shift();
         if(waitingTrain != null) {
             route.routeWithoutTrain = false;
-            waitingTrain.AddRoute(route);
+            waitingTrain.addRoute(route);
         } else {
             route.routeWithoutTrain = true;
         }
     }
 
-    getRouteFromSource(source: Source) {
-        return this.routes.find(route => route.source === source && route.IsEstablished());
+    getRouteFromSource(source) {
+        return this.routes.find(route => route.source === source && route.isEstablished());
     }
-}
-export default TrainManager;
+};

@@ -1,19 +1,19 @@
-import DisplayManager from "../DisplayManager";
-import StopBtn from "./StopBtn";
+var DisplayManager = require("../DisplayManager");
+var El = require("./El");
 
-enum State { ON, OFF }
+var State = { ON: "ON", OFF: "OFF" };
 
 /**
  *
  */
-class LedLabel {
-    state: State = State.OFF;
+class LedLabel extends El {
+    state = State.OFF;
 
-    view: {
-        led?: Snap.Element;
-    } = {};
+    view = {};
 
-    constructor(_id: string, _view: ViewConstructor) {
+    constructor(_id, _view) {
+        super(_id);
+
         this.createView(_view);
         this.updateView();
     }
@@ -22,12 +22,12 @@ class LedLabel {
     // Logic
     //////////////////////////////////////////////////
 
-    On() {
+    on() {
         this.state = State.ON;
         this.updateView();
     }
 
-    Off() {
+    off() {
         this.state = State.OFF;
         this.updateView();
     }
@@ -36,7 +36,7 @@ class LedLabel {
     // View
     //////////////////////////////////////////////////
 
-    createView(_view: ViewConstructor) {
+    createView(_view) {
         // Create the led
         let r = DisplayManager.cfg.attr.led.size;
         this.view.led = DisplayManager.paper.circle(_view.pos.x, _view.pos.y, r).attr({
@@ -60,17 +60,4 @@ class LedLabel {
         });
     }
 }
-export default LedLabel;
-
-interface Vector {
-    x: number;
-    y: number;
-}
-interface ViewConstructor {
-    pos: Vector;
-    label?: {
-        value: string,
-        pos: Vector,
-        above: boolean
-    };
-}
+module.exports = LedLabel;

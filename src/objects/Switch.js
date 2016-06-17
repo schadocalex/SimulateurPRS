@@ -1,42 +1,37 @@
-import Gate from "./Gate";
-import DisplayManager from "../DisplayManager";
-import Config from "../Config";
-import StopBtn from "./StopBtn";
+var Snap = require("snapsvg");
 
-enum State { LEFT, RIGHT, UNKNOWN }
+var Gate = require("./Gate");
+var DisplayManager = require("../DisplayManager");
+var Config = require("../Config");
+var StopBtn = require("./StopBtn");
+
+const State = { LEFT: "LEFT", RIGHT: "RIGHT", UNKNOWN: "UNKNOWN" };
 
 /**
  *
  */
 class Switch extends Gate {
-    ports: {
-        lone?: Gate;
-        left?: Gate;
-        right?: Gate;
-    } = {};
+    ports = {};
 
-    state: State = State.LEFT;
-    isMoving: boolean = false;
-    combinedSwitch: Switch = null;
+    state = State.LEFT;
+    isMoving = false;
+    combinedSwitch = null;
 
-    leftLength: number;
-    rightLength: number;
+    leftLength;
+    rightLength;
 
-    view: {
-        leftLine?: Snap.Element;
-        rightLine?: Snap.Element;
+    view = {
+        leftLef: null,
+        rightLef: null
+    };
 
-        leftLed?: Snap.Element;
-        rightLed?: Snap.Element;
-    } = {};
-
-    constructor(_id: string, _view: ViewConstructor) {
+    constructor(_id, _view) {
         super(_id);
         this.createView(_view);
         this.updateView();
     }
 
-    static combinedSwitches(switch1: Switch, switch2: Switch) {
+    static combinedSwitches(switch1, switch2) {
         switch1.combinedSwitch = switch2;
         switch2.combinedSwitch = switch1;
     }
@@ -45,7 +40,7 @@ class Switch extends Gate {
     // Logic
     //////////////////////////////////////////////////
 
-    MoveTo(dir: string) {
+    moveTo(dir) {
         var stateToGo = Switch.convertStringToState(dir);
 
         if(this.isMoving || this.state === stateToGo || this.combinedSwitch && this.combinedSwitch.isLocked())
@@ -60,14 +55,14 @@ class Switch extends Gate {
             this.isMoving = false;
         }, Config.duration.switchChange);
 
-        this.combinedSwitch && this.combinedSwitch.MoveTo(dir);
+        this.combinedSwitch && this.combinedSwitch.moveTo(dir);
     }
 
-    MatchState(dir: string) {
+    matchState(dir) {
         return this.state === Switch.convertStringToState(dir);
     }
 
-    GetLength() {
+    getLength() {
         switch(this.state) {
             case State.LEFT:
                 return this.leftLength;
@@ -78,7 +73,7 @@ class Switch extends Gate {
         }
     }
 
-    static convertStringToState(s: string) {
+    static convertStringToState(s) {
         switch(s) {
             case "left":
                 return State.LEFT;
@@ -93,7 +88,7 @@ class Switch extends Gate {
     // View
     //////////////////////////////////////////////////
 
-    createView(_view: ViewConstructor) {
+    createView(_view) {
         // Convert points
         let centerPoint = [_view.center.x, _view.center.y];
         let lonePoints = _view.lone.reduce((pre, cur) => pre.concat([cur.x, cur.y]), []);
@@ -159,20 +154,4 @@ class Switch extends Gate {
         }
     }
 }
-export default Switch;
-
-interface Vector {
-    x: number;
-    y: number;
-}
-interface ViewConstructor {
-    center: Vector;
-    lone: Vector[];
-    left: Vector[];
-    right: Vector[];
-    label?: {
-        value: string,
-        pos: Vector,
-        above: boolean
-    };
-}
+module.exports = Switch;

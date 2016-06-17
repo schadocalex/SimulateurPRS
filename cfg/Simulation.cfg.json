@@ -1,0 +1,5 @@
+{
+  "switchChange": 1000,
+  "blinkButtonInterval": 500,
+  "announcement": 5000
+}

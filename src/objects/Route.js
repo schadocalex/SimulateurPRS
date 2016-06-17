@@ -1,43 +1,30 @@
-import DisplayManager from "../DisplayManager";
-import El from "./El";
-import Source from "./Source";
-import Zone from "./Zone";
-import Gate from "./Gate";
-import Switch from "./Switch";
-import Config from "../Config";
-import Train from "./Train";
+var DisplayManager = require("../DisplayManager");
+var El = require("./El");
+var Source = require("./Source");
+var Zone = require("./Zone");
+var Gate = require("./Gate");
+var Switch = require("./Switch");
+var Config = require("../Config");
+var Train = require("./Train");
 
-enum State { SAVED, PREPARING, ESTABLISHED, RELEASED }
+const State = { SAVED: "SAVED", PREPARING: "PREPARING", ESTABLISHED: "ESTABLISHED", RELEASED: "RELEASED" };
 
 /**
  *
  */
 class Route extends El {
-    hasTP: boolean = false;
-    isTP: boolean = false;
-    source: Source = null;
-    nextSource: Source = null;
-    transit: "left" | "right";
-    zones: Zone[] = [];
-    gates: Gate[] = [];
-    switchDirs: string[] = [];
-    state: State = State.RELEASED;
-    currentTrain: Train;
+    isTP = false;
+    state = State.RELEASED;
+    currentTrain = null;
 
     gatesByZone = {};
-    notFreeZones: Zone[];
-    routeWithoutTrain: boolean = true;
+    notFreeZones = [];
+    routeWithoutTrain = true;
 
-    view: {
-        textBg?: {
-            DA?: Snap.Element,
-            TP?: Snap.Element
-        };
-    } = {};
+    view = {};
     timeoutBlink = null;
 
-    constructor(_id: string, _source: Source, _nextSource: Source, _zones: Zone[], _gates: Gate[],
-                _switchDirs: string[], _transit, _TP: boolean, _view: ViewConstructor) {
+    constructor(_id, _source, _nextSource, _zones, _gates, _switchDirs, _transit, _TP, _view) {
         super(_id);
 
         this.hasTP = _TP;
@@ -53,15 +40,15 @@ class Route extends El {
 
         this.zones.forEach(zone => this.gatesByZone[zone.id] = zone.gates.filter(gate => this.gates.indexOf(gate) >= 0));
 
-        setInterval(() => this.Update(), 100);
+        setInterval(() => this.update(), 100);
     }
 
-    changeState(state: State) {
+    changeState(state) {
         this.state = state;
         this.updateView();
     }
 
-    changeTP(TP: boolean) {
+    changeTP(TP) {
         this.isTP = TP;
         this.updateView();
     }
@@ -74,12 +61,12 @@ class Route extends El {
      * Called when a click on the route button is pressed
      * @param routeType
      */
-    onClick(routeType: string) {
+    onClick(routeType) {
         let TP = routeType === "TP";
 
         switch(this.state) {
             case State.RELEASED:
-                this.Order(TP);
+                this.order(TP);
                 break;
             case State.SAVED:
             case State.PREPARING:
@@ -87,20 +74,20 @@ class Route extends El {
                     if (this.hasTP && TP !== this.isTP) {
                         this.changeTP(TP);
                     } else {
-                        this.ManualRelease();
+                        this.manualRelease();
                     }
                 }
                 break;
         }
     }
 
-    Update() {
+    update() {
         switch(this.state) {
             case State.SAVED:
-                this.Save();
+                this.save();
                 break;
             case State.PREPARING:
-                this.Prepare();
+                this.prepare();
                 break;
         }
     }
@@ -110,11 +97,11 @@ class Route extends El {
      * @param TP - true if TP mode is asked.
      * @constructor
      */
-    Order(TP: boolean) {
+    order(TP) {
         if(this.state === State.RELEASED) {
             if(this.areAllCompatibleTransitFree()) {
                 this.isTP = TP;
-                this.Save();
+                this.save();
             }
         }
     }
@@ -123,11 +110,11 @@ class Route extends El {
      * Save a route. If all opposite transits are free, go to Prepare() step.
      * @constructor
      */
-    Save() {
+    save() {
         this.changeState(State.SAVED);
         this.notFreeZones = this.zones.slice();
-        if(this.areAllCompatibleTransitFree() && this.areAllOppositeTransitFree()) {
-            this.Prepare();
+        if(this.areAllTransitFree()) {
+            this.prepare();
         }
     }
 
@@ -135,12 +122,14 @@ class Route extends El {
      * Prepare a route. Change all switches if incorrect and then go to Interlock() step.
      * @constructor
      */
-    Prepare() {
-        this.changeState(State.PREPARING);
-        this.lockTransits();
-        this.moveSwitches();
+    prepare() {
+        if(this.state !== State.PREPARING) {
+            this.changeState(State.PREPARING);
+            this.lockTransits();
+            this.moveSwitches();
+        }
         if(this.areAllSwitchesCorrect()) {
-            this.Interlock();
+            this.interlock();
         }
     }
 
@@ -148,32 +137,32 @@ class Route extends El {
      * Lock transits to prevent others routes to be ordered in the same switches.
      * @constructor
      */
-    Interlock() {
-        this.Establish();
+    interlock() {
+        this.establish();
     }
 
     /**
      * Establish the route by switch off the stop lights.
      * @constructor
      */
-    Establish() {
+    establish() {
         this.changeState(State.ESTABLISHED);
         this.onEstablished();
         this.showInTCO();
     }
-
     onEstablished(){}
-    IsEstablished() {
+
+    isEstablished() {
         return this.state === State.ESTABLISHED;
     }
 
-    ManualRelease() {
+    manualRelease() {
         this.changeState(State.RELEASED);
         this.hideInTCO();
         this.unlockTransits();
     }
 
-    AutoReleaseGates(gates: Gate[]) {
+    autoReleaseGates(gates) {
         this.notFreeZones = this.notFreeZones.filter(zone => {
             let everyGatesAreFreeInTheZone = this.gatesByZone[zone.id].every(gate => gates.indexOf(gate) >= 0);
             if(everyGatesAreFreeInTheZone && !this.isTP) {
@@ -188,7 +177,7 @@ class Route extends El {
             if(!this.isTP) {
                 this.changeState(State.RELEASED);
             } else {
-                this.Establish();
+                this.establish();
                 this.notFreeZones = this.zones.slice();
             }
         }
@@ -198,11 +187,16 @@ class Route extends El {
     // Logic helpers
     //////////////////////////////////////////////////
 
+
+    areAllTransitFree() {
+        return this.areAllCompatibleTransitFree() && this.areAllOppositeTransitFree();
+    }
+
     /**
      * Return true if all compatible transit (eg. in the way the route is, for example all "left" transit) are free to use.
      */
     areAllCompatibleTransitFree() {
-        return this.zones.every(zone => !zone.IsLocked(this.transit));
+        return this.zones.every(zone => !zone.isLocked(this.transit));
     }
 
     /**
@@ -210,13 +204,13 @@ class Route extends El {
      */
     areAllOppositeTransitFree() {
         let transitName = this.transit === "left" ? "right" : "left";
-        return this.zones.every(zone => !zone.IsLocked(transitName));
+        return this.zones.every(zone => !zone.isLocked(transitName));
     }
 
     moveSwitches() {
         this.gates.forEach((gate, i) => {
             if(gate instanceof Switch) {
-                gate.MoveTo(this.switchDirs[i]);
+                gate.moveTo(this.switchDirs[i]);
             }
         });
     }
@@ -224,7 +218,7 @@ class Route extends El {
     areAllSwitchesCorrect() {
         return this.gates.every((gate, i) => {
             if(gate instanceof Switch) {
-                return gate.MatchState(this.switchDirs[i]);
+                return gate.matchState(this.switchDirs[i]);
             } else {
                 return true;
             }
@@ -232,34 +226,34 @@ class Route extends El {
     }
 
     lockTransits() {
-        this.zones.forEach(zone => zone.Lock(this, this.transit));
+        this.zones.forEach(zone => zone.lock(this, this.transit));
     }
 
     unlockTransits() {
         this.zones.forEach(zone => this.unlockTransit(zone));
     }
 
-    unlockTransit(zone: Zone) {
-        zone.Unlock(this, this.transit);
+    unlockTransit(zone) {
+        zone.unlock(this, this.transit);
     }
 
     showInTCO() {
-        this.gates.forEach(gate => gate.Lock(this, this.isTP));
+        this.gates.forEach(gate => gate.lock(this, this.isTP));
     }
 
     hideInTCO() {
         this.zones.forEach(zone => this.hideZoneInTCO(zone));
     }
 
-    hideZoneInTCO(zone: Zone) {
-        this.gatesByZone[zone.id].forEach(gate => gate.Unlock(this));
+    hideZoneInTCO(zone) {
+        this.gatesByZone[zone.id].forEach(gate => gate.unlock(this));
     }
 
     //////////////////////////////////////////////////
     // View
     //////////////////////////////////////////////////
 
-    createView(_view: ViewConstructor) {
+    createView(_view) {
         // Create the label
         if(_view.btn != null) {
             this.view.textBg = {};
@@ -318,18 +312,4 @@ class Route extends El {
         }
     }
 }
-export default Route;
-
-interface Vector {
-    x: number;
-    y: number;
-}
-interface ViewConstructor {
-    btn: {
-        value:  string;
-        pos: {
-            DA?: Vector;
-            TP?: Vector;
-        }
-    };
-}
+module.exports = Route;

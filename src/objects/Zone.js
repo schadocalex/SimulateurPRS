@@ -1,22 +1,16 @@
-import Gate from "./Gate";
-import DisplayManager from "../DisplayManager";
-import El from "./El";
+var DisplayManager = require("../DisplayManager");
+var El = require("./El");
 
-/**
- *
- */
 class Zone extends El {
-    gates: Gate[] = [];
+
     transit = {
         left: null,
         right: null
     };
 
-    view: {
-        text?: Snap.Element;
-    } = {};
+    view = {};
 
-    constructor(_id: string, _gates: Gate[], _view: ViewConstructor) {
+    constructor(_id, _gates, _view) {
         super(_id);
 
         this.gates = _gates;
@@ -29,19 +23,19 @@ class Zone extends El {
     // Logic
     //////////////////////////////////////////////////
 
-    Lock(locker: any, _transit: string) {
+    lock(locker, _transit) {
         if(this.transit[_transit] == null) {
             this.transit[_transit] = locker;
         }
     }
 
-    Unlock(locker: any, _transit: string) {
-        if(this.IsLocked(_transit) && this.transit[_transit] === locker) {
+    unlock(locker, _transit) {
+        if(this.isLocked(_transit) && this.transit[_transit] === locker) {
             this.transit[_transit] = null;
         }
     }
 
-    IsLocked(_transit: string) {
+    isLocked(_transit) {
         return this.transit[_transit] != null;
     }
 
@@ -49,7 +43,7 @@ class Zone extends El {
     // View
     //////////////////////////////////////////////////
 
-    createView(_view: ViewConstructor) {
+    createView(_view) {
         // Create the label
         if(_view.label != null) {
             let labelX = _view.label.pos.x;
@@ -64,16 +58,4 @@ class Zone extends El {
 
     }
 }
-export default Zone;
-
-interface Vector {
-    x: number;
-    y: number;
-}
-interface ViewConstructor {
-    label?: {
-        value: string,
-        pos: Vector,
-        above: boolean
-    };
-}
+module.exports = Zone;

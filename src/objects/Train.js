@@ -1,30 +1,18 @@
-import LedLabel from "./LedLabel";
-import Gate from "./Gate";
-import Source from "./Source";
-import Route from "./Route";
+var LedLabel = require("./LedLabel");
+var Gate = require("./Gate");
+var Source = require("./Source");
+var Route = require("./Route");
 
 /**
  *
  */
 class Train {
-    id: string;
-    velocity: number;
-    length: number;
-    announcementTime: number;
-    arrivalTime: number;
-    maxStopTime: number;
-    baseSource: Source;
-    baseAnnouncement: LedLabel;
-    baseTime: number;
-
-    gates: Gate[] = [];
-    pos: number = 0;
+    gates = [];
+    pos = 0;
 
     updateIntervalID = null;
 
-    constructor(_id: string, _velocity: number, _length: number,
-                _announcementTime: number, _arrivalTime: number, _maxStopTime: number,
-                _baseSource: Source, _baseAnnouncement: LedLabel) {
+    constructor(_id, _velocity, _length, _announcementTime, _arrivalTime, _maxStopTime, _baseSource, _baseAnnouncement) {
         this.id = _id;
         this.velocity = _velocity;
         this.length = _length;
@@ -41,7 +29,7 @@ class Train {
         var t = Date.now();
         this.updateIntervalID = setInterval(() => {
             let now = Date.now();
-            this.Update((now - t) / 1000);
+            this.update((now - t) / 1000);
             t = now;
         }, 500);
     }
@@ -53,13 +41,13 @@ class Train {
     // Logic
     //////////////////////////////////////////////////
 
-    AddRoute(route: Route) {
+    addRoute(route) {
         this.gates = this.gates.concat(route.gates);
         this.baseSource = route.nextSource;
         route.currentTrain = this;
     }
 
-    Update(dt: number) {
+    update(dt) {
         if(this.gates.length === 0) {
             return;
         }
@@ -89,7 +77,7 @@ class Train {
         let minIndex = this.getGateInfoByPos(this.pos - this.length).index;
         let maxIndex = this.getGateInfoByPos(this.pos).index;
         this.gates.forEach((gate, i) => {
-            gate.Train(minIndex <= i && i <= maxIndex);
+            gate.setTrain(minIndex <= i && i <= maxIndex);
         });
         this.onReleaseGates(this.gates.slice(0, minIndex));
 
@@ -98,12 +86,12 @@ class Train {
         }
     }
 
-    onReleaseGates(gate: Gate[]){}
+    onReleaseGates(gate){}
 
-    getGateInfoByPos(pos: number) {
+    getGateInfoByPos(pos) {
         let iPos = 0;
         for(let i = 0; i < this.gates.length; i++) {
-            iPos += this.gates[i].GetLength();
+            iPos += this.gates[i].getLength();
             if(iPos > pos) {
                 return {
                     index: i,
@@ -118,4 +106,4 @@ class Train {
         };
     }
 }
-export default Train;
+module.exports = Train;

@@ -1,19 +1,26 @@
+var El = require("./El");
 
-import El from "./El";
 /**
- *
+ * @abstract
  */
-abstract class Gate extends El {
-    ports: Object;
-    _locker: any = null;
+class Gate extends El {
 
-    routeType: string = "free";
-    isTrainOn: boolean = false;
+    /**
+     * Route type. Can be free
+     * @type {string}
+     */
+    routeType = "free";
+
+    /**
+     * True if a train is actually on the track.
+     * @type {boolean}
+     */
+    isTrainOn = false;
 
     /**
      * Add a link between two Gate objects at the given ports.
      */
-    static addLink(from: Gate, fromPort: string, to: Gate, toPort: string) {
+    static addLink(from, fromPort, to, toPort) {
         from.ports[fromPort] = to;
         to.ports[toPort] = from;
     }
@@ -22,7 +29,13 @@ abstract class Gate extends El {
     // Logic
     //////////////////////////////////////////////////
 
-    Lock(locker: any, isTP: boolean) {
+    /**
+     * Lock the gate. A locker has to be sent as first parameter. This locker will be the only once who can unlock.
+     * @param locker - Any object.
+     * @param isTP -
+     * @constructor
+     */
+    lock(locker, isTP) {
         let newRouteType = isTP ? "TP" : "DA";
         if(this._locker == null || this._locker === locker && this.routeType !== newRouteType) {
             this._locker = locker;
@@ -31,7 +44,7 @@ abstract class Gate extends El {
         }
     }
 
-    Unlock(locker: any) {
+    unlock(locker) {
         if(this._locker === locker) {
             this._locker = null;
             this.routeType = "free";
@@ -43,17 +56,23 @@ abstract class Gate extends El {
         return this._locker != null;
     }
 
-    Train(isTrainOn: boolean) {
+    setTrain(isTrainOn) {
         this.isTrainOn = isTrainOn;
         this.updateView();
     }
 
-    abstract GetLength();
+    /**
+     * @abstract
+     */
+    getLength() {}
 
     //////////////////////////////////////////////////
     // View
     //////////////////////////////////////////////////
 
-    abstract updateView();
+    /**
+     * @abstract
+     */
+    updateView() {}
 }
-export default Gate;
+module.exports = Gate;
