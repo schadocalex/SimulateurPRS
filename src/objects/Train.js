@@ -1,19 +1,16 @@
-var LedLabel = require("./LedLabel");
-var Gate = require("./Gate");
-var Source = require("./Source");
-var Route = require("./Route");
+var El = require("./El");
 
 /**
  *
  */
-class Train {
+class Train extends El {
     gates = [];
     pos = 0;
 
     updateIntervalID = null;
 
     constructor(_id, _velocity, _length, _announcementTime, _arrivalTime, _maxStopTime, _baseSource, _baseAnnouncement) {
-        this.id = _id;
+        super(_id);
         this.velocity = _velocity;
         this.length = _length;
         this.announcementTime = _announcementTime;
@@ -44,7 +41,6 @@ class Train {
     addRoute(route) {
         this.gates = this.gates.concat(route.gates);
         this.baseSource = route.nextSource;
-        route.currentTrain = this;
     }
 
     update(dt) {
@@ -86,7 +82,7 @@ class Train {
         }
     }
 
-    onReleaseGates(gate){}
+    onReleaseGates(){}
 
     getGateInfoByPos(pos) {
         let iPos = 0;

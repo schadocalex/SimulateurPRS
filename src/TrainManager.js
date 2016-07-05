@@ -1,7 +1,7 @@
 var Config = require("./Config");
 
 /**
- *
+ * OK
  */
 module.exports = class TrainManager {
     waitingTrains = {};
@@ -28,27 +28,42 @@ module.exports = class TrainManager {
 
     onArrived(train) {
         let route = this.getRouteFromSource(train.baseSource);
-        if(route != null && route.routeWithoutTrain) {
-            route.routeWithoutTrain = false;
-            train.addRoute(route);
-        } else {
-            this.waitingTrains[train.baseSource.id].push(train);
+        if(route == null || !this.setTrainOnRoute(train, route)) {
+            if(this.waitingTrains[train.baseSource.id].indexOf(train) === -1) {
+                this.waitingTrains[train.baseSource.id].push(train);
+            }
         }
     }
 
     onReleaseGates(train, gates) {
         this.routes
-            .filter(route => route.isEstablished())
-            .forEach(route => route.currentTrain === train && route.autoReleaseGates(gates));
+            .filter(route => {
+                if(route.currentTrain === train) {
+                    if(route.gates.every(g => !g.isTrainOn)) {
+                        route.currentTrain = null;
+                        return true;
+                    }
+
+                    return route.isEstablished() && !route.isTP;
+                }
+                else {
+                    return false;
+                }
+            })
+            .forEach(route => route.autoReleaseGates(gates));
     }
 
     onEstablished(route) {
-        let waitingTrain = this.waitingTrains[route.source.id].shift();
-        if(waitingTrain != null) {
-            route.routeWithoutTrain = false;
-            waitingTrain.addRoute(route);
+        this.setTrainOnRoute(this.waitingTrains[route.source.id].shift(), route);
+    }
+
+    setTrainOnRoute(train, route) {
+        if(train != null && route.currentTrain == null) {
+            route.currentTrain = train;
+            train.addRoute(route);
+            return true;
         } else {
-            route.routeWithoutTrain = true;
+            return false;
         }
     }
 

@@ -1150,13 +1150,13 @@
       "baseSource": "AE_right",
       "baseAnnouncement": "announcement_AE"
     },
-    "trainB": {
+    "trainC": {
       "velocity": 10,
       "length": 30,
       "announcementTime": 5000,
-      "arrivalTime": 3000,
+      "arrivalTime": 5000,
       "maxStopTime": 15000,
-      "baseSource": "AT_left",
+      "baseSource": "AE_right",
       "baseAnnouncement": "announcement_AE"
     }
   }

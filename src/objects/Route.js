@@ -19,7 +19,6 @@ class Route extends El {
 
     gatesByZone = {};
     notFreeZones = [];
-    routeWithoutTrain = true;
 
     view = {};
     timeoutBlink = null;
@@ -70,6 +69,7 @@ class Route extends El {
                 break;
             case State.SAVED:
             case State.PREPARING:
+            case State.ESTABLISHED:
                 if(this.notFreeZones.length === this.zones.length || this.state !== State.ESTABLISHED) {
                     if (this.hasTP && TP !== this.isTP) {
                         this.changeTP(TP);
@@ -99,7 +99,7 @@ class Route extends El {
      */
     order(TP) {
         if(this.state === State.RELEASED) {
-            if(this.areAllCompatibleTransitFree()) {
+            if(true || this.areAllCompatibleTransitFree()) { // TODO nez à nez ou dos à dos
                 this.isTP = TP;
                 this.save();
             }
@@ -129,16 +129,8 @@ class Route extends El {
             this.moveSwitches();
         }
         if(this.areAllSwitchesCorrect()) {
-            this.interlock();
+            this.establish();
         }
-    }
-
-    /**
-     * Lock transits to prevent others routes to be ordered in the same switches.
-     * @constructor
-     */
-    interlock() {
-        this.establish();
     }
 
     /**
@@ -157,9 +149,12 @@ class Route extends El {
     }
 
     manualRelease() {
-        this.changeState(State.RELEASED);
-        this.hideInTCO();
-        this.unlockTransits();
+        // TODO : Cant release if a train is in the ZaP
+        if(this.currentTrain == null) {
+            this.changeState(State.RELEASED);
+            this.hideInTCO();
+            this.unlockTransits();
+        }
     }
 
     autoReleaseGates(gates) {
@@ -172,15 +167,24 @@ class Route extends El {
             return !everyGatesAreFreeInTheZone;
         });
 
+        if(!this.isTP && this.notFreeZones.length === 1) {
+            let zone = this.notFreeZones.pop();
+            this.unlockTransit(zone);
+            this.hideZoneInTCO(zone);
+        }
+
         // If all zones are free, release the route
         if(this.notFreeZones.length === 0) {
             if(!this.isTP) {
                 this.changeState(State.RELEASED);
             } else {
-                this.establish();
                 this.notFreeZones = this.zones.slice();
+                this.establish();
             }
         }
+    }
+
+    releaseZone(zone) {
     }
 
     //////////////////////////////////////////////////
@@ -189,7 +193,7 @@ class Route extends El {
 
 
     areAllTransitFree() {
-        return this.areAllCompatibleTransitFree() && this.areAllOppositeTransitFree();
+        return this.currentTrain == null && this.areAllCompatibleTransitFree() && this.areAllOppositeTransitFree();
     }
 
     /**
