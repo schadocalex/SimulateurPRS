@@ -43,6 +43,9 @@ class Route extends El {
     }
 
     changeState(state) {
+        if(state === State.RELEASED) {
+            this.source.switchStoplight("on");
+        }
         this.state = state;
         this.updateView();
     }
@@ -139,6 +142,7 @@ class Route extends El {
      */
     establish() {
         this.changeState(State.ESTABLISHED);
+        this.source.switchStoplight("off");
         this.onEstablished();
         this.showInTCO();
     }
@@ -182,9 +186,6 @@ class Route extends El {
                 this.establish();
             }
         }
-    }
-
-    releaseZone(zone) {
     }
 
     //////////////////////////////////////////////////
@@ -295,16 +296,17 @@ class Route extends El {
 
             switch (this.state) {
                 case State.ESTABLISHED:
+                case State.PREPARING:
                     btnDA = this.isTP ? "off" : "on";
                     btnTP = this.isTP ? "on" : "off";
                     break;
-                case State.PREPARING:
                 case State.SAVED:
                     let timeBetweenBlink = Config.duration.blinkButtonInterval;
                     if ((Date.now() % (timeBetweenBlink * 2)) < timeBetweenBlink) {
                         !this.isTP && (btnDA = btnDA === "off" ? "on" : "off");
                         this.isTP && (btnTP = btnTP === "off" ? "on" : "off");
                     }
+                    break;
             }
 
             this.view.textBg.DA.attr({

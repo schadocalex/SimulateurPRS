@@ -28,7 +28,7 @@ module.exports = class TrainManager {
 
     onArrived(train) {
         let route = this.getRouteFromSource(train.baseSource);
-        if(route == null || !this.setTrainOnRoute(train, route)) {
+        if(route == null || !this.setTrainOnRoute(train, route, false)) {
             if(this.waitingTrains[train.baseSource.id].indexOf(train) === -1) {
                 this.waitingTrains[train.baseSource.id].push(train);
             }
@@ -38,7 +38,7 @@ module.exports = class TrainManager {
     onReleaseGates(train, gates) {
         this.routes
             .filter(route => {
-                if(route.currentTrain === train) {
+                if(route.currentTrain === train && !train.reserved) {
                     if(route.gates.every(g => !g.isTrainOn)) {
                         route.currentTrain = null;
                         return true;
@@ -54,13 +54,17 @@ module.exports = class TrainManager {
     }
 
     onEstablished(route) {
-        this.setTrainOnRoute(this.waitingTrains[route.source.id].shift(), route);
+        this.setTrainOnRoute(this.waitingTrains[route.source.id].shift(), route, true);
     }
 
-    setTrainOnRoute(train, route) {
+    setTrainOnRoute(train, route, wasWaiting) {
         if(train != null && route.currentTrain == null) {
             route.currentTrain = train;
-            train.addRoute(route);
+            train.reserveRoute();
+            setTimeout(() => {
+                train.addRoute(route);
+                route.source.switchStoplight("on");
+            }, wasWaiting ? Config.duration.trainStartingDelay : 0);
             return true;
         } else {
             return false;

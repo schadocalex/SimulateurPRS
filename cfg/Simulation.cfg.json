@@ -1,5 +1,10 @@
 {
+  // Durée du changement d'une aiguille en ms
   "switchChange": 1000,
+  // Durée de clignotement des boutons en état "sauvegardé" en ms
   "blinkButtonInterval": 500,
-  "announcement": 5000
+  // Durée d'une annonce en ms
+  "announcement": 5000,
+  // Durée de redémarrage d'un train lorsqu'il est arrêté à un feu en ms
+  "trainStartingDelay": 1000
 }

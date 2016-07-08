@@ -6,6 +6,7 @@ var El = require("./El");
 class Train extends El {
     gates = [];
     pos = 0;
+    reserved = false;
 
     updateIntervalID = null;
 
@@ -24,11 +25,12 @@ class Train extends El {
         setTimeout(() => this.onAnnounced(), this.announcementTime);
         setTimeout(() => this.onArrived(), this.arrivalTime);
         var t = Date.now();
-        this.updateIntervalID = setInterval(() => {
+        this.update = () => {
             let now = Date.now();
-            this.update((now - t) / 1000);
+            this._update((now - t) / 1000);
             t = now;
-        }, 500);
+        };
+        this.updateIntervalID = setInterval(this.update, 500);
     }
 
     onAnnounced(){}
@@ -39,11 +41,17 @@ class Train extends El {
     //////////////////////////////////////////////////
 
     addRoute(route) {
+        this.reserved = false;
         this.gates = this.gates.concat(route.gates);
         this.baseSource = route.nextSource;
+        this.update();
     }
 
-    update(dt) {
+    reserveRoute() {
+        this.reserved = true;
+    }
+
+    _update(dt) {
         if(this.gates.length === 0) {
             return;
         }
@@ -57,7 +65,9 @@ class Train extends El {
         } else {
             this.pos = gateInfo.end;
             this.updateGatesState();
-            this.onArrived();
+            if(!this.reserved) {
+                this.onArrived();
+            }
         }
     }
 

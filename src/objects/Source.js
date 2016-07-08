@@ -23,6 +23,11 @@ class Source extends El {
         this.updateView();
     }
 
+    switchStoplight(state) {
+        this.stoplight = state;
+        this.updateView();
+    }
+
     createView(_view) {
         // Create the stoplight
         var rectAttr = DisplayManager.cfg.attr.stoplight.rect;

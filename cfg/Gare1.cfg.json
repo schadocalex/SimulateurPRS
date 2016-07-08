@@ -1142,7 +1142,7 @@
   },
   "trains": {
     "trainA": {
-      "velocity": 10,
+      "velocity": 20,
       "length": 30,
       "announcementTime": 5000,
       "arrivalTime": 5000,
@@ -1151,7 +1151,7 @@
       "baseAnnouncement": "announcement_AE"
     },
     "trainC": {
-      "velocity": 10,
+      "velocity": 20,
       "length": 30,
       "announcementTime": 5000,
       "arrivalTime": 5000,
